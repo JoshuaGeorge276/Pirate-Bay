@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7e5e7f825ee2f4e86ac0f3690113d5, type: 3}
+  m_Name: TstScripted2
+  m_EditorClassIdentifier: 
+  dialogue:
+  - dialogue:
+    - Hello, there trusty pirate!
+  - dialogue:
+    - 'What do you want? '
+  - dialogue:
+    - I was wondering whether you wanted to join my pirate crew
+  - dialogue:
+    - Why on earth would I want to do that?
+  - dialogue:
+    - Well...
+    - If you arn't interested in the massive treasure my crew are going to get then
+      nevermind.
+  - dialogue:
+    - Treasure..?
+    - Which Treasure?
+  - dialogue:
+    - Don't tell me you haven't heard of the treasure of the great haul.
+  - dialogue:
+    - Oh.. umm.. yes...
+    - 'Of course I have heard of it. I just forgot. '
+  - dialogue:
+    - So what do you say then?
+  - dialogue:
+    - 'Fine.. I''ll join your damned crew. '
