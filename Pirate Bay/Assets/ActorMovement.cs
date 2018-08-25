@@ -21,6 +21,9 @@ public class ActorMovement : ManagedBehaviour
 
     public override void ManagedUpdate(float a_fDeltaTime)
     {
+        if (!inputPlayer.isEngaged)
+            return;
+
         Vector2 currentPos = transform.position;
 
         float x = inputPlayer.Controller.Device.GetAxis(InputAxisValue.LeftX);

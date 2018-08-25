@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: DefaultKeyboard
+  m_EditorClassIdentifier: Assembly-CSharp::KeyboardBindings
+  LeftXAxis: KeyboardHorizontal
+  LeftYAxis: KeyboardVertical
+  RightXAxis: Mouse X
+  RightYAxis: Mouse Y
+  MouseWheelAxis: Mouse ScrollWheel
+  LeftStickButton: 112
+  RightStickButton: 122
+  DPadUp: 273
+  DPadDown: 274
+  DPadLeft: 276
+  DPadRight: 275
+  Action1: 32
+  Action2: 13
+  Action3: 101
+  Action4: 9
+  LeftTrigger: 0
+  RightTrigger: 0
+  LeftBumper: 0
+  RightBumper: 0
+  Start: 27
+  Return: 0
+  Select: 0
+  Pause: 0
+  Menu: 0
+  Options: 0

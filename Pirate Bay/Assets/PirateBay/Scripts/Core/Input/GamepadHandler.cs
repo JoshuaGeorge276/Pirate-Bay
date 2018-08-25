@@ -1,28 +1,25 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
-public class KeyboardHandler : IDeviceHandler
+public class GamepadHandler : IDeviceHandler
 {
+    private int PadId;
+    public GamePadBindings _bindings;
+    private GamePadDevice device;
 
-    public KeyboardBindings _bindings;
-    private KeyboardDevice device;
-
-
-    public KeyboardHandler()
+    public GamepadHandler(int a_padID)
     {
-        _bindings = InputManager.Instance.KeyboardDefaults();
-        device = new KeyboardDevice(_bindings);
+        _bindings = InputManager.Instance.GamePadDefaults();
+        PadId = a_padID;
+        device = new GamePadDevice(_bindings, PadId);
     }
 
-    public KeyboardHandler(KeyboardBindings a_bindings)
+    public GamepadHandler(int a_padID, GamePadBindings a_bindings)
     {
-        if (a_bindings)
-            _bindings = a_bindings;
-
-        device = new KeyboardDevice(_bindings);
+        _bindings = a_bindings;
+        PadId = a_padID;
+        device = new GamePadDevice(_bindings, PadId);
     }
 
     public void ResetDevice()
@@ -46,7 +43,7 @@ public class KeyboardHandler : IDeviceHandler
 
     public bool GetButtonDown(InputButtonValue a_value)
     {
-        return device.GetButton(a_value) == (int)InputButtonState.Down;
+        return device.GetButton(a_value) == (int) InputButtonState.Down;
     }
 
     public bool GetButtonPressed(InputButtonValue a_value)

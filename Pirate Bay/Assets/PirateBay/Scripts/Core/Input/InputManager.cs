@@ -1,72 +1,170 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using Core;
 using UnityEngine;
+using UnityEngine.Networking.NetworkSystem;
 
 public class InputManager : SingletonBehaviour<InputManager>
 {
+    [Range(1, 4)]
     [SerializeField]
     private int playerCount;
+
+    [System.Serializable]
+    private class DefaultBindings
+    {
+        public KeyboardBindings keyboardDefaults;
+        public GamePadBindings gamepadDefaults;
+    }
+
+    [SerializeField] 
+    private DefaultBindings _defaultBindings;
+
+    public KeyboardBindings KeyboardDefaults()
+    {
+        return _defaultBindings.keyboardDefaults;
+    }
+
+    public GamePadBindings GamePadDefaults()
+    {
+        return _defaultBindings.gamepadDefaults;
+    }
+
+    private InputPlayer _primaryInputPlayer;
 
     private List<InputPlayer> players = new List<InputPlayer>();
 
     private float _deltaTime;
 
+    private Action currentUpdateAction;
+
+    private EngagementHandler engagementHandler;
+    private EngagementStatus? currentEngagementStatus = null;
+
+    public bool checkEngagementOnStart = false;
+    public InputButtonValue engagementKey;
+
     private void Awake()
     {
-        for (int i = 0; i < playerCount; i++)
+        currentUpdateAction = UpdatePlayers;
+
+        _primaryInputPlayer = AddPlayer();
+
+        if (playerCount > 1)
         {
-            players.Add(new InputPlayer());
+            for (int i = 1; i < playerCount; i++)
+            {
+                AddPlayer();
+            }
         }
+
+        if(checkEngagementOnStart)
+            StartEngagement(true);
     }
 
 	// Use this for initialization
-	void Start () 
+	private void Start ()
 	{
-		
+	    string[] names = Input.GetJoystickNames();
+	    for (int i = 0; i < names.Length; ++i)
+	    {
+            Debug.Log(names[i]);
+	    }
+
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	private void Update ()
 	{
-	    _deltaTime = Time.deltaTime;
-	    for (int i = 0; i < playerCount; ++i)
-	    {
+        if(currentUpdateAction != null)
+            currentUpdateAction();
+	}
+
+    // isPrimaryEngagement - only checking for main player
+    private void StartEngagement(bool isPrimaryEngagement)
+    {
+        List<InputPlayer> engagementsToCheck;
+
+        if (isPrimaryEngagement)
+        {
+            engagementsToCheck = new List<InputPlayer>();
+            engagementsToCheck.Add(_primaryInputPlayer);
+        }
+        else
+        {
+            engagementsToCheck = players;
+        }
+        
+        engagementHandler = new EngagementHandler(
+            engagementKey,
+            ref players,
+            EndEngagement
+            );
+
+        currentUpdateAction = CheckForEngagement;
+    }
+
+    private void CheckForEngagement()
+    {
+        if(engagementHandler != null)
+            engagementHandler.UpdateEngagement();
+    }
+
+    private void EndEngagement(EngagementStatus a_status)
+    {
+        currentEngagementStatus = a_status;
+        engagementHandler = null;
+        currentUpdateAction = UpdatePlayers;
+    }
+
+    private void UpdatePlayers()
+    {
+        _deltaTime = Time.deltaTime;
+        for (int i = 0; i < playerCount; ++i)
+        {
             players[i].Update(_deltaTime);
-	    }
+        }
 
-	    //float x = GetPlayer(0).Controller.Device.GetAxis(InputAxisValue.LeftX);
-	    //float y = GetPlayer(0).Controller.Device.GetAxis(InputAxisValue.LeftY);
-	    //Debug.Log("Horizontal: " + (int)x + " Vertical: " + (int)y);
+        bool action1 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action1);
+        bool action2 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action2);
+        bool action3 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action3);
+        bool action4 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action4);
 
-	    bool action1, action2, action3, action4;
-
-	    action1 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action1);
-	    action2 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action2);
-	    action3 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action3);
-	    action4 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action4);
-
-
+        //Debug.Log("Horizontal: " + Input.GetAxis("KeyboardHorizontal"));
 
         if(action1)
             Debug.Log("Action 1 pressed!");
         
-	    if(action2)
-	        Debug.Log("Action 2 pressed!");
+        if(action2)
+            Debug.Log("Action 2 pressed!");
         
-	    if(action3)
-	        Debug.Log("Action 3 pressed!");
+        if(action3)
+            Debug.Log("Action 3 pressed!");
         
-	    if(action4)
-	        Debug.Log("Action 4 pressed!");
-	}
+        if(action4)
+            Debug.Log("Action 4 pressed!");
+    }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
         for (int i = 0; i < playerCount; ++i)
         {
             players[i].LateUpdate(_deltaTime);
         }
+    }
+
+    public InputPlayer AddPlayer()
+    {
+        InputPlayer newPlayer = new InputPlayer();
+        players.Add(newPlayer);
+        return newPlayer;
+    }
+
+    public InputPlayer GetPrimaryPlayer()
+    {
+        return _primaryInputPlayer;
     }
 
     public InputPlayer GetPlayer(int a_id)

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: DefaultGamePad
+  m_EditorClassIdentifier: Assembly-CSharp::GamePadBindings
+  LeftXAxis: PadLeftStickX
+  LeftYAxis: PadLeftStickY
+  RightXAxis: PadRightStickX
+  RightYAxis: PadRightStickY
+  LeftTriggerAxis: PadLeftTrigger
+  RightTriggerAxis: PadRightTrigger
+  DPadX: PadDPadX
+  DPadY: PadDPadY
+  LeftStickButton: 9
+  RightStickButton: 10
+  Action1: 1
+  Action2: 2
+  Action3: 3
+  Action4: 4
+  LeftBumper: 5
+  RightBumper: 6
+  Start: 8
+  Return: 0
+  Select: 7
+  Pause: 0
+  Menu: 0
+  Options: 0
