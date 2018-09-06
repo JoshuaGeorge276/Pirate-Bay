@@ -8,12 +8,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d7e5e7f825ee2f4e86ac0f3690113d5, type: 3}
-  m_Name: TstScripted2
+  m_Script: {fileID: 11500000, guid: 5a3cb6d2b1990724b8d788cdf03755a5, type: 3}
+  m_Name: New Dialogue Data
   m_EditorClassIdentifier: 
-  dialogue:
-  - dialogue:
-    - Hello.
-    - Would you like to join my crew?
-  - dialogue:
-    - 'I will join your crew if you respond yes. '
+  data:
+  - type: 0
+    dialogue:
+      dialogue:
+      - Good. I agree to join your crew.
+  - type: 1
+    dialogue:
+      dialogue:
+      - Too Bad.
