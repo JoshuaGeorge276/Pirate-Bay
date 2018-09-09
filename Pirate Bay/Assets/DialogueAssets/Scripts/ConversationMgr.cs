@@ -6,8 +6,8 @@ public class ConversationMgr : MonoBehaviour {
 
     public static ConversationMgr Instance;
 
-    public PlayerSpeaker playerSpeaker;
-    public NPCSpeaker npcSpeaker;
+    public RespondSpeaker playerSpeaker;
+    public RespondSpeaker npcSpeaker;
 
     public CustomConversationLayout layout;
 

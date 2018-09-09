@@ -5,5 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public abstract class IDialogueContext : ScriptableObject {
 
-    public abstract IDialogueDisplayer Display(Speaker speaker, IIterable conversation);
+    public abstract void Speak(Conversation conversation, Speaker speaker);
+    public abstract IDialogueDisplayer Display(IIterable conversation, Speaker speaker);
 }

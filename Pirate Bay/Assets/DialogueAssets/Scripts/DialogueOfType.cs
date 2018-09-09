@@ -7,15 +7,25 @@ public class DialogueOfType : IDialogueContext
 {
     public DialogueTypes.Type type;
 
+    private IDialogueContext currentContext;
+
     public void Init(DialogueTypes.Type type)
     {
         this.type = type;
     }
 
-    public override IDialogueDisplayer Display(Speaker speaker, IIterable conversation)
+    public override void Speak(Conversation conversation, Speaker speaker)
     {
-        NPCSpeaker npcSpeaker = (NPCSpeaker)speaker;
-        ScriptedDialogue dialogue = npcSpeaker.ReactToDialogue(type);
-        return dialogue.Display(npcSpeaker, conversation);
+        RespondSpeaker respondSpeaker = (RespondSpeaker)speaker;
+        if (respondSpeaker)
+        {
+            currentContext = respondSpeaker.Respond(type);
+            currentContext.Speak(conversation, respondSpeaker);
+        }
+    }
+
+    public override IDialogueDisplayer Display(IIterable conversation, Speaker speaker)
+    {
+        return currentContext.Display(conversation, speaker);
     }
 }

@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player2NPCConversation : IIterable
+public class Player2NPCConversation : Conversation
 {
 
-    private Speaker playerSpeaker;
-    private NPCSpeaker npcSpeaker;
+    private RespondSpeaker playerSpeaker;
+    private RespondSpeaker npcSpeaker;
 
     private Queue<IDialogueContext> activeContexts;
     private CustomConversationLayout layout;
     private int layoutSize, currentContextIndex;
+    private int currentSpeakerIndex;
 
-    public Player2NPCConversation(CustomConversationLayout layout, Speaker playerSpeaker, NPCSpeaker npcSpeaker)
+    public Player2NPCConversation(CustomConversationLayout layout, RespondSpeaker playerSpeaker, RespondSpeaker npcSpeaker)
     {
         activeContexts = new Queue<IDialogueContext>();
         this.layout = layout;
@@ -31,10 +32,10 @@ public class Player2NPCConversation : IIterable
 
     private Speaker GetNextSpeaker()
     {
-        return (currentContextIndex % 2 == 0 ? playerSpeaker : npcSpeaker);
+        return (currentSpeakerIndex % 2 == 0 ? playerSpeaker : npcSpeaker);
     }
 
-    public void Next()
+    public override void Next()
     {
         if(activeContexts.Count <= 0)
         {
@@ -52,7 +53,7 @@ public class Player2NPCConversation : IIterable
         if(activeContexts.Count > 0)
         {
             IDialogueContext current = activeContexts.Dequeue();
-            current.Display(GetNextSpeaker(), this);
+            current.Speak(this, GetNextSpeaker());
             currentContextIndex++;
         }
         else
@@ -65,5 +66,10 @@ public class Player2NPCConversation : IIterable
     public void EnqueueContext(IDialogueContext context)
     {
         activeContexts.Enqueue(context);
+    }
+
+    public override void ProceedToNextSpeaker()
+    {
+        currentSpeakerIndex++;
     }
 }

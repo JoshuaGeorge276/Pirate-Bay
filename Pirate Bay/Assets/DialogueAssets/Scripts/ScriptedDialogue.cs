@@ -12,9 +12,16 @@ public class ScriptedDialogue : IDialogueContext
     {
         this.sentences = sentences;
     }
+    public override void Speak(Conversation conversation, Speaker speaker)
+    {
+        if (sentences.Length <= 0) sentences = new string[] { "..." };
+        Display(conversation, speaker);
+        conversation.ProceedToNextSpeaker();
+    }
 
-    public override IDialogueDisplayer Display(Speaker speaker, IIterable conversation)
+    public override IDialogueDisplayer Display(IIterable conversation, Speaker speaker)
     {
         return new ScriptedDialogueDisplayer(sentences, speaker, conversation);
     }
+
 }

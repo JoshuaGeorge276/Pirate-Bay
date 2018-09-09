@@ -441,7 +441,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSpeaker: {fileID: 1410758098}
   npcSpeaker: {fileID: 1191309590}
-  layout: {fileID: 11400000, guid: bf150cb1d5bade948aeb420f55039530, type: 2}
+  layout: {fileID: 11400000, guid: 9c8daff912cdc5642868d1259721a4c9, type: 2}
 --- !u!4 &498341782
 Transform:
   m_ObjectHideFlags: 0
@@ -775,12 +775,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1191309589}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09460d0d6c622b949bcb349767288ec0, type: 3}
+  m_Script: {fileID: 11500000, guid: 30def80cf3b4a0a48992d6c0b5a67a98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: NPC
-  image: {fileID: 21300000, guid: fc5f1e3a013b0eb468ab1669db0bd8c5, type: 3}
-  dialogueBundle: {fileID: 11400000, guid: d03c533b02c7eeb40ab447cc35ec5513, type: 2}
+  name: NPC Test
+  image: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  dialogueData: {fileID: 11400000, guid: ffe77d385b3f2f2418605f568b1f6d2a, type: 2}
 --- !u!4 &1191309591
 Transform:
   m_ObjectHideFlags: 0
@@ -941,11 +941,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1410758097}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02f1368c4b1bd814fb026f4021dcf906, type: 3}
+  m_Script: {fileID: 11500000, guid: 30def80cf3b4a0a48992d6c0b5a67a98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   name: Player
-  image: {fileID: 21300000, guid: 4b35be597ccf14d46a7e6c97fc9e8b9d, type: 3}
+  image: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  dialogueData: {fileID: 11400000, guid: 4055607ad4bb7514cb4c24db175c450a, type: 2}
 --- !u!4 &1410758099
 Transform:
   m_ObjectHideFlags: 0

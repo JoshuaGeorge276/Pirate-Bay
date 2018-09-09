@@ -2,40 +2,122 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEditor;
 
 [System.Serializable]
 [CreateAssetMenu(fileName = "New Options Dialogue", menuName = "Dialogue Context/Options Dialogue", order = 1)]
 public class OptionsDialogue : IDialogueContext {
 
-    public DialogueTypes.Triggers triggerType;
+    public DialogueOption[] options = new DialogueOption[4];
 
-    public string[] options;
-
-    public DialogueTypes.Type[] responseTriggers;
-
-    private IIterable conversation;
-
-    public override IDialogueDisplayer Display(Speaker speaker, IIterable conversation)
+    private Conversation conversation;
+    public override void Speak(Conversation conversation, Speaker speaker)
     {
         this.conversation = conversation;
-
-        UnityAction<int>[] onClicks = new UnityAction<int>[options.Length];
-
-        for(int i = 0; i < onClicks.Length; i++)
-        {
-            onClicks[i] = OptionSelected;
-        }
-
-        return new OptionsDialogueDisplayer(options, onClicks, speaker);
+        Display(conversation, speaker);
     }
 
     public void OptionSelected(int i)
     {
         Player2NPCConversation convo = (Player2NPCConversation)conversation;
-        DialogueOfType dialogueOfType = CreateInstance<DialogueOfType>();
-        dialogueOfType.Init(responseTriggers[i]);
-        convo.EnqueueContext(dialogueOfType);
+        DialogueOption selected = options[i];
+        if (!selected.endConversation)
+        {
+            convo.EnqueueContext(selected.nextContext);
+            if (selected.proceedToNextSpeaker)
+            {
+                conversation.ProceedToNextSpeaker();
+            }
+        }
         convo.Next();   
-        Debug.Log("Add new context with response trigger: " + responseTriggers[i].ToString());
     }
+
+    public override IDialogueDisplayer Display(IIterable conversation, Speaker speaker)
+    {
+        string[] optionsText = new string[4];
+        UnityAction<int>[] onClicks = new UnityAction<int>[options.Length];
+
+        for (int i = 0; i < 4; i++)
+        {
+            optionsText[i] = options[i].dialogue;
+            onClicks[i] = OptionSelected;
+        }
+
+        return new OptionsDialogueDisplayer(optionsText, onClicks, speaker);
+    }
+}
+
+[System.Serializable]
+public class DialogueOption
+{
+    public string dialogue;
+    public bool endConversation;
+    public bool proceedToNextSpeaker;
+
+    [SerializeField]
+    public IDialogueContext nextContext;
+
+}
+
+[CustomEditor(typeof(OptionsDialogue))]
+public class OptionsDialogueEditor : Editor
+{
+    static int optionToModify;
+
+    private void OnEnable()
+    {
+    }
+
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        EditorGUILayout.BeginVertical("box");
+
+        OptionsDialogue optionsDialogue = target as OptionsDialogue;
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Options Settings", EditorStyles.boldLabel);
+        EditorGUILayout.Space();
+
+        optionToModify = EditorGUILayout.IntSlider("Option to modify", optionToModify, 1, 4);
+
+        if (GUILayout.Button("Add Scripted Dialogue"))
+        {
+            ScriptedDialogue newDialogue = CreateInstance<ScriptedDialogue>();
+            optionsDialogue.options[optionToModify - 1].nextContext = newDialogue;
+
+            AssetDatabase.AddObjectToAsset(newDialogue, "Player");
+            AssetDatabase.SaveAssets();
+        }
+
+        if (GUILayout.Button("Add Options Dialogue"))
+        {
+            optionsDialogue.options[optionToModify - 1].nextContext = CreateInstance<OptionsDialogue>();
+            EditorUtility.SetDirty(optionsDialogue.options[optionToModify - 1].nextContext);
+        }
+
+        if (GUILayout.Button("Add Typed Dialogue"))
+        {
+            optionsDialogue.options[optionToModify - 1].nextContext = CreateInstance<DialogueOfType>();
+            EditorUtility.SetDirty(optionsDialogue.options[optionToModify - 1].nextContext);
+        }
+
+        if (GUILayout.Button("Remove Context"))
+        {
+            if(optionsDialogue.options[optionToModify - 1].nextContext != null)
+            {
+                DestroyImmediate(optionsDialogue.options[optionToModify - 1].nextContext);
+                optionsDialogue.options[optionToModify - 1].nextContext = null;
+                EditorUtility.SetDirty(optionsDialogue.options[optionToModify - 1].nextContext);
+            }
+        }
+
+        EditorGUILayout.EndVertical();
+
+        serializedObject.ApplyModifiedProperties();
+        Repaint();
+
+    }
+
 }

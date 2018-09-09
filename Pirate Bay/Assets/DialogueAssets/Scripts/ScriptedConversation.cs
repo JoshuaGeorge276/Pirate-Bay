@@ -24,7 +24,7 @@ public class ScriptedConversation : IIterable {
         {
             ScriptedDialogue dialogue = layout.GetNextDialogue(currentDialogue);
             Speaker speaker = speakers[layout.GetNextSpeaker(currentDialogue)];
-            dialogue.Display(speaker, this);
+            dialogue.Display(this, speaker);
             currentDialogue++;
         }
         else
