@@ -6,7 +6,7 @@ using Core;
 using UnityEngine;
 using UnityEngine.Networking.NetworkSystem;
 
-public class InputManager : SingletonBehaviour<InputManager>
+public class InputManager : SingletonBehaviour<InputManager>, EnvironmentModule
 {
     [Range(1, 4)]
     [SerializeField]
@@ -43,10 +43,16 @@ public class InputManager : SingletonBehaviour<InputManager>
     private EngagementHandler engagementHandler;
     private EngagementStatus? currentEngagementStatus = null;
 
+    private bool isDebug = false;
     public bool checkEngagementOnStart = false;
     public InputButtonValue engagementKey;
 
-    private void Awake()
+    public InputManager(bool a_isDebug)
+    {
+        isDebug = a_isDebug;
+    }
+
+    public void Load()
     {
         currentUpdateAction = UpdatePlayers;
 
@@ -60,20 +66,20 @@ public class InputManager : SingletonBehaviour<InputManager>
             }
         }
 
-        if(checkEngagementOnStart)
+        if (checkEngagementOnStart)
+        {
             StartEngagement(true);
+        }
     }
 
-	// Use this for initialization
-	private void Start ()
-	{
-	    string[] names = Input.GetJoystickNames();
-	    for (int i = 0; i < names.Length; ++i)
-	    {
+    public void PostLoad()
+    {
+        string[] names = Input.GetJoystickNames();
+        for (int i = 0; i < names.Length; ++i)
+        {
             Debug.Log(names[i]);
-	    }
-
-	}
+        }
+    }
 	
 	// Update is called once per frame
 	private void Update ()
@@ -176,4 +182,6 @@ public class InputManager : SingletonBehaviour<InputManager>
 
         return null;
     }
+
+
 }
