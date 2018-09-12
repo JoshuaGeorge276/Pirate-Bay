@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Core
 {
-    public class BehaviourManager : SingletonBehaviour<BehaviourManager>, EnvironmentModule
+    public class BehaviourManager : SingletonBehaviour<BehaviourManager>
     {
         private const int maxBehaviours = 1000;
 
@@ -15,17 +15,12 @@ namespace Core
         private float _deltaTime;
         private float _fixedTime;
 
-        public void Load()
+        private void Awake()
         {
             _Behaviours = new List<ManagedBehaviour>(maxBehaviours);
             _regularBehaviours = new List<ManagedBehaviour>();
             _fixedBehaviours = new List<ManagedBehaviour>();
             _lateBehaviours = new List<ManagedBehaviour>();
-        }
-
-        public void PostLoad()
-        {
-            
         }
 
         // Update is called once per frame

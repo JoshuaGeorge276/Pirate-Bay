@@ -6,7 +6,7 @@ using Core;
 using UnityEngine;
 using UnityEngine.Networking.NetworkSystem;
 
-public class InputManager : SingletonBehaviour<InputManager>, EnvironmentModule
+public class InputManager : SingletonBehaviour<InputManager>
 {
     [Range(1, 4)]
     [SerializeField]
@@ -47,12 +47,9 @@ public class InputManager : SingletonBehaviour<InputManager>, EnvironmentModule
     public bool checkEngagementOnStart = false;
     public InputButtonValue engagementKey;
 
-    public InputManager(bool a_isDebug)
-    {
-        isDebug = a_isDebug;
-    }
+    public void SetDebugMode(bool a_value) { isDebug = a_value; }
 
-    public void Load()
+    private void Awake()
     {
         currentUpdateAction = UpdatePlayers;
 
@@ -72,7 +69,7 @@ public class InputManager : SingletonBehaviour<InputManager>, EnvironmentModule
         }
     }
 
-    public void PostLoad()
+    private void Start()
     {
         string[] names = Input.GetJoystickNames();
         for (int i = 0; i < names.Length; ++i)
