@@ -5,34 +5,64 @@ using UnityEngine;
 
 public class ActorMovement : ManagedBehaviour
 {
-    private InputPlayer inputPlayer;
+    private Vector2 _input;
+    public Vector2 Input { set { _input = value; } }
 
-    void Awake()
-    {
+    private Vector2 _velocity;
 
-    }
+    [SerializeField]
+    private float _acceleration;
+    [SerializeField]
+    private float _runMultiplier;
+    [SerializeField]
+    private float _maxWalkSpeed;
+    [SerializeField]
+    private float _maxRunSpeed;
+
+    [SerializeField]
+    private float _drag;
+
+    private Vector2 Position { get { return transform.position; } set { transform.position = value; } }
 
 	// Use this for initialization
 	protected override void Start () 
 	{
 		base.Start();
-	    inputPlayer = InputManager.Instance.GetPlayer(0);
 	}
 
     public override void ManagedUpdate(float a_fDeltaTime)
     {
-        if (!inputPlayer.isEngaged)
-            return;
+        Vector2 curinput = _input;
 
-        Vector2 currentPos = transform.position;
+        Vector2 additiveVelocity = curinput * _acceleration * Time.deltaTime;
 
-        float x = inputPlayer.Controller.Device.GetAxis(InputAxisValue.LeftX);
-        float y = inputPlayer.Controller.Device.GetAxis(InputAxisValue.LeftY);
+        // TODO Drag
+        if(additiveVelocity.sqrMagnitude <= 0) // No new Movement
+        {
+            // Apply Drag
+            Vector2 negVelocity = -_velocity.normalized;
 
-        currentPos.x += x * a_fDeltaTime;
-        currentPos.y += y * a_fDeltaTime;
+            if(negVelocity.sqrMagnitude > 0.1f)
+                additiveVelocity =  negVelocity * _drag  * Time.deltaTime;
+        }
 
+        _velocity += additiveVelocity;
 
-        transform.position = currentPos;
+        // TODO Max Speed Clamping
+        _velocity = Vector2.ClampMagnitude(_velocity, _maxWalkSpeed);
+
+        Vector2 newPos = Position;
+
+        newPos += _velocity;
+
+        Position = newPos;
+
+        ResetInput();
+    }
+
+    private void ResetInput()
+    {
+        _input.x = 0f;
+        _input.y = 0f;
     }
 }
