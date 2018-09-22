@@ -20,11 +20,9 @@ public class GamingEnvironment : MonoBehaviour
             return;
         }
 
-        GameObject newObj;
         for(int i = 0; i < environmentObjects.Length; ++i)
         {
-            newObj = Instantiate(environmentObjects[i]);
-            newObj.transform.SetParent(transform);
+            Instantiate(environmentObjects[i], transform);
         }
 
         if(InputManager.Instance)

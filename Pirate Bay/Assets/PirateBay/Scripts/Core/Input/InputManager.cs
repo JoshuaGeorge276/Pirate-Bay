@@ -63,18 +63,15 @@ public class InputManager : SingletonBehaviour<InputManager>
             }
         }
 
-        if (checkEngagementOnStart)
-        {
-            StartEngagement(true);
-        }
-    }
-
-    private void Start()
-    {
         string[] names = Input.GetJoystickNames();
         for (int i = 0; i < names.Length; ++i)
         {
             Debug.Log(names[i]);
+        }
+
+        if (checkEngagementOnStart)
+        {
+            StartEngagement(true);
         }
     }
 	
@@ -107,6 +104,8 @@ public class InputManager : SingletonBehaviour<InputManager>
             );
 
         currentUpdateAction = CheckForEngagement;
+
+        Debug.Log("Press a button to engage a controller!");
     }
 
     private void CheckForEngagement()
