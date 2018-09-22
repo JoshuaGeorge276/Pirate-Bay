@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Core;
 using TMPro;
@@ -18,6 +19,7 @@ public class ActorMovement : ManagedBehaviour
     private bool _isMoving = false;
     private Vector2 _lastPos;
     private Vector2 _target;
+    private Vector2 _facingDir;
 
     public Vector2 CurrentMoveDir
     {
@@ -31,6 +33,7 @@ public class ActorMovement : ManagedBehaviour
         _transform = transform;
         _lastPos = LocalPosition;
         _target = LocalPosition;
+        _facingDir = Vector2.down;
     }
 
     // Use this for initialization
@@ -105,7 +108,7 @@ public class ActorMovement : ManagedBehaviour
     private void StartMove(Vector2 a_moveDir)
     {
         // TODO Collision Check
-
+        _facingDir = a_moveDir;
         _target = _lastPos + a_moveDir;
         _isMoving = true;
     }
@@ -121,7 +124,7 @@ public class ActorMovement : ManagedBehaviour
             LocalPosition = nextPos;
 
 
-            if (absLength < 0.1f && ShouldMove(out nextPos))
+            if (absLength < 0.01f && ShouldMove(out nextPos))
             {
                 _lastPos = _target;
                 StartMove(nextPos);

@@ -197,7 +197,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1.03
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64beaff71b645994ea13d584cea8aee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 5
+  MoveSpeed: 4
 --- !u!114 &762576101
 MonoBehaviour:
   m_ObjectHideFlags: 0
