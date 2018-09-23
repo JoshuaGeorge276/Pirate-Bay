@@ -43,8 +43,11 @@ public class InputManager : SingletonBehaviour<InputManager>
     private EngagementHandler engagementHandler;
     private EngagementStatus? currentEngagementStatus = null;
 
+    private bool isDebug = false;
     public bool checkEngagementOnStart = false;
     public InputButtonValue engagementKey;
+
+    public void SetDebugMode(bool a_value) { isDebug = a_value; }
 
     private void Awake()
     {
@@ -60,20 +63,17 @@ public class InputManager : SingletonBehaviour<InputManager>
             }
         }
 
-        if(checkEngagementOnStart)
-            StartEngagement(true);
-    }
-
-	// Use this for initialization
-	private void Start ()
-	{
-	    string[] names = Input.GetJoystickNames();
-	    for (int i = 0; i < names.Length; ++i)
-	    {
+        string[] names = Input.GetJoystickNames();
+        for (int i = 0; i < names.Length; ++i)
+        {
             Debug.Log(names[i]);
-	    }
+        }
 
-	}
+        if (checkEngagementOnStart)
+        {
+            StartEngagement(true);
+        }
+    }
 	
 	// Update is called once per frame
 	private void Update ()
@@ -104,6 +104,8 @@ public class InputManager : SingletonBehaviour<InputManager>
             );
 
         currentUpdateAction = CheckForEngagement;
+
+        Debug.Log("Press a button to engage a controller!");
     }
 
     private void CheckForEngagement()
@@ -176,4 +178,6 @@ public class InputManager : SingletonBehaviour<InputManager>
 
         return null;
     }
+
+
 }

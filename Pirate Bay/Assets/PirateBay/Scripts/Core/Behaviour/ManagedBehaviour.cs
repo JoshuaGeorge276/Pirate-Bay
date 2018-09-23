@@ -3,19 +3,8 @@ using UnityEngine;
 
 namespace Core
 {
-    [Flags]
-    public enum ManagedBehaviourFlag
-    {
-        None = 0x0,
-        Regular = 0x2,
-        Fixed = 0x4,
-        Late = 0x6
-    }
-
     public abstract class ManagedBehaviour : MonoBehaviour
     {
-        [HideInInspector] public ManagedBehaviourFlag Flag = ManagedBehaviourFlag.None;
-
         protected virtual void Awake() {}
         protected virtual void Start()
         {

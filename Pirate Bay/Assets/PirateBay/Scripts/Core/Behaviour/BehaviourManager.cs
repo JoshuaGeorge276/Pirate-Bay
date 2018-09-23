@@ -7,23 +7,20 @@ namespace Core
     {
         private const int maxBehaviours = 1000;
 
-        private readonly List<ManagedBehaviour> _Behaviours = new List<ManagedBehaviour>(maxBehaviours);
-        private readonly List<ManagedBehaviour> _regularBehaviours = new List<ManagedBehaviour>();
-        private readonly List<ManagedBehaviour> _fixedBehaviours = new List<ManagedBehaviour>();
-        private readonly List<ManagedBehaviour> _lateBehaviours = new List<ManagedBehaviour>();
+        private List<ManagedBehaviour> _Behaviours;
+        private List<ManagedBehaviour> _regularBehaviours;
+        private List<ManagedBehaviour> _fixedBehaviours;
+        private List<ManagedBehaviour> _lateBehaviours;
 
         private float _deltaTime;
         private float _fixedTime;
 
-        public void Awake()
+        private void Awake()
         {
-
-        }
-
-        // Use this for initialization
-        public void Start()
-        {
-
+            _Behaviours = new List<ManagedBehaviour>(maxBehaviours);
+            _regularBehaviours = new List<ManagedBehaviour>();
+            _fixedBehaviours = new List<ManagedBehaviour>();
+            _lateBehaviours = new List<ManagedBehaviour>();
         }
 
         // Update is called once per frame

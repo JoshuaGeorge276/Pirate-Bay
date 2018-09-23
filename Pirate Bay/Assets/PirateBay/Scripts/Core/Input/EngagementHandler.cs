@@ -43,7 +43,7 @@ public class EngagementHandler
         currentEngagmentStatus = new EngagementStatus(numControllers);
 
         keyboardEngagementKey = InputManager.Instance.KeyboardDefaults().Action1;
-        gamePadEngagementKey = InputManager.Instance.GamePadDefaults().Action1;
+        gamePadEngagementKey = InputManager.Instance.GamePadDefaults().Action1;        
     }
 
     public void UpdateEngagement()
