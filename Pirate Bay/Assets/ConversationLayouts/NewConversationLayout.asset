@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b6f83a41c91e7a47bd1b5d03d389de8, type: 3}
+  m_Name: NewConversationLayout
+  m_EditorClassIdentifier: 
+  title: Test Conversation!
+  contexts:
+  - {fileID: 11400000, guid: c1deb356a6889d84181fe1a373feaab8, type: 2}
+  - {fileID: 11400000, guid: 6d4aa084ba406ba4c8e50ce02508a775, type: 2}
+  - {fileID: 11400000, guid: a998d00a854869d448bf374f067d7074, type: 2}
+  - {fileID: 11400000, guid: 41e17bc82fd1bd04da27ddb560dfbccd, type: 2}
+  - {fileID: 11400000, guid: b4ba231a95af60c47b99f230db522784, type: 2}
+  - {fileID: 11400000, guid: 610709662fc76d64c888b67c8642758b, type: 2}
+  - {fileID: 11400000, guid: 0f000f29aeb368c488331f35344f48f2, type: 2}
+  childCounts: 01000000010000000400000001000000010000000100000001000000
