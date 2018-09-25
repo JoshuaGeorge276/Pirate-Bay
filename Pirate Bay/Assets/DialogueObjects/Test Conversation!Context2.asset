@@ -11,4 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d133d03485e7a47a3a7caf7b88792e, type: 3}
   m_Name: Test Conversation!Context2
   m_EditorClassIdentifier: 
-  type: 1
+  type: 4

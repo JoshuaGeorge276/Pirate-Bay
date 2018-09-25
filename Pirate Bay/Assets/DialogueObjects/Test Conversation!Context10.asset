@@ -8,8 +8,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be0bdb7f534d9b4479f748b7adb7ba9d, type: 3}
-  m_Name: Test Conversation!Context7
+  m_Script: {fileID: 11500000, guid: 0618458c5b416354a8567a08936a2464, type: 3}
+  m_Name: Test Conversation!Context10
   m_EditorClassIdentifier: 
-  sentences:
-  - You want me to help you find your dog?
+  options:
+  - dialogue: Yes
+    endConversation: 0
+    proceedToNextSpeaker: 1
+  - dialogue: No
+    endConversation: 0
+    proceedToNextSpeaker: 1

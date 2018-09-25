@@ -15,9 +15,16 @@ public abstract class Node
 
     public Action<Node> OnRemoveNode;
 
+    protected GUIStyle titleStyle;
+    protected Rect titleRect;
+
     public Node(Vector2 position, float width, float height, GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode)
     {
         title = "Node";
+        titleStyle = new GUIStyle();
+        titleStyle.alignment = TextAnchor.UpperCenter;
+        titleStyle.fontStyle = FontStyle.Bold;
+        titleStyle.fontSize = 14;
         rect = new Rect(position.x, position.y, width, height);
         style = nodeStyle;
         defaultNodeStyle = nodeStyle;
@@ -32,7 +39,10 @@ public abstract class Node
 
     public virtual void Draw()
     {
-        GUI.Box(rect, title, style);
+        titleRect = rect;
+        titleRect.y = rect.y - 10;
+        GUI.Label(titleRect, new GUIContent(title), titleStyle);
+        GUI.Box(rect, "", style);
     }
 
     public virtual bool ProcessEvents(Event e)

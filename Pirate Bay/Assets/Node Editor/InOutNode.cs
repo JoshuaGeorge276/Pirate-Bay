@@ -16,9 +16,9 @@ public abstract class InOutNode : DialogueNode
 
     public override void Draw()
     {
+        base.Draw();
         inPoint.Draw();
         outPoint.Draw();
-        base.Draw();
     }
     public override bool ContainsConnection(ConnectionPoint point)
     {

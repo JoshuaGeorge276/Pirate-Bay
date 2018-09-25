@@ -9,9 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be0bdb7f534d9b4479f748b7adb7ba9d, type: 3}
-  m_Name: Test Conversation!Context3
+  m_Name: Test Conversation!Context8
   m_EditorClassIdentifier: 
   sentences:
-  - 'I need to tell you a crazy story. '
-  - I have a really cute dog called, Massie, and she got stolen!
-  - I need you to help me find her!!
+  - Ok ill help
