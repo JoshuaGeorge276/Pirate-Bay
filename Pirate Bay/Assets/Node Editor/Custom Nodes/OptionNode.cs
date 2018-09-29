@@ -4,45 +4,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class OptionNode : Node
+[System.Serializable]
+public class OptionNode : ConnectionNode
 {
+    // Dialogue Data
     public string text;
     public bool proceedToNextSpeaker;
-    public bool endConversation;
 
-    private ConnectionPoint outPoint;
-
+    // Draw Data
     private const float padding = 15.0f;
     private Action<Node> onClickRemove;
 
-    public OptionNode(int optionNum, Vector2 position, float width, float height, GUIStyle nodeStyle, Action<Node> OnClickRemoveNode, GUIStyle outPointStyle, Action<ConnectionPoint> OnClickOutPoint) : base(position, width, height, nodeStyle, nodeStyle, OnClickRemoveNode)
+    // Connection Points
+    private ConnectionPoint outPoint;
+
+    public OptionNode(int number, GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode, Action<ConnectionPoint> OnClickConnectionPoint) : base(nodeStyle, selectedStyle, OnClickRemoveNode)
     {
-        title = "Option " + optionNum;
-        titleStyle.fontStyle = FontStyle.Normal;
-        titleStyle.alignment = TextAnchor.UpperLeft;
-        outPoint = new ConnectionPoint(this, ConnectionPointType.Out, outPointStyle, OnClickOutPoint);
+        title = "Option " + number;
+        outPoint = new ConnectionPoint(this, ConnectionPointType.Out, OnClickConnectionPoint);
         onClickRemove = OnClickRemoveNode;
     }
 
     public override void Draw()
     {
-        titleRect = rect;
-        titleRect.y += 10;
-        titleRect.x += 10;
-        GUI.Box(rect, "", style);
-        GUI.Label(titleRect, new GUIContent(title), titleStyle);
-        outPoint.Draw();
-        GUILayout.BeginArea(new Rect(rect.x + padding, rect.y + padding * 2.0f, rect.width - padding * 2.0f, rect.height - padding));
+        GUILayout.BeginVertical(defaultNodeStyle);
+        GUILayout.Space(10);
+        GUILayout.Label(title);
         text = EditorGUILayout.TextField(text);
         GUILayout.BeginHorizontal();
         proceedToNextSpeaker = EditorGUILayout.Toggle("Proceed To Next Speaker ", proceedToNextSpeaker);
-        endConversation = EditorGUILayout.Toggle("End Conversation? ", endConversation);
         GUILayout.EndHorizontal();
-        if(GUILayout.Button("Remove Option"))
+
+        if (GUILayout.Button("Remove Option"))
         {
             OnClickRemove(this);
         }
-        GUILayout.EndArea();
+        GUILayout.Space(10);
+        GUILayout.EndVertical();
+        EditorGUILayout.Separator();
     }
 
     public override bool ContainsConnection(ConnectionPoint point)
@@ -56,5 +55,10 @@ public class OptionNode : Node
         {
             onClickRemove(this);
         }
+    }
+
+    public void DrawConnections()
+    {
+        outPoint.Draw();
     }
 }

@@ -3,64 +3,59 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OptionsDialogueNode : DialogueNode
+[System.Serializable]
+public class OptionsDialogueNode : DialogueData
 {
+    public ConnectionPoint inPoint;
 
-    public ConnectionPoint inPoint; 
-
-    private const float padding = 10.0f;
-    private float optionWidth, optionHeight;
-    private Vector2 optionStartPos;
     private GUIStyle optionNodeStyle;
+    [SerializeField]
     private GUIStyle optionNodeSelectedStyle;
+    [SerializeField]
     private GUIStyle outPointStyle;
+    [SerializeField]
     private Action<ConnectionPoint> onClickOutPoint;
-    private List<OptionNode> optionNodes;
-    private Action<Node> OnRemoveOptionNode;
+    [SerializeField]
+    public List<OptionNode> optionNodes;
+    [SerializeField]
+    private Action<Node> onRemoveOptionNode;
 
-    public OptionsDialogueNode(Vector2 position, float width, float height, GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode, GUIStyle inPointStyle, Action<ConnectionPoint> OnClickInPoint, GUIStyle outPointStyle, Action<ConnectionPoint> OnClickOutPoint, Action<Node> OnRemoveOptionNode) : base(position, width, height, nodeStyle, selectedStyle, OnClickRemoveNode)
+    private Action<ConnectionPoint> onClickConnectionPoint;
+
+    public OptionsDialogueNode()
     {
-        title = "Dialogue with Options";
-        inPoint = new ConnectionPoint(this, ConnectionPointType.In, inPointStyle, OnClickInPoint);
         optionNodeStyle = new GUIStyle();
         optionNodeStyle.normal.background = UnityEditor.EditorGUIUtility.Load("builtin skins/darkskin/images/node2.png") as Texture2D;
         optionNodeStyle.border = new RectOffset(12, 12, 12, 12);
 
-        this.outPointStyle = outPointStyle;
-        onClickOutPoint = OnClickOutPoint;
-
         optionNodes = new List<OptionNode>(4);
-
-        this.OnRemoveOptionNode = OnRemoveOptionNode;
     }
 
-    public override void Drag(Vector2 delta)
+    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint)
     {
-        base.Drag(delta);
-
-        foreach (OptionNode node in optionNodes)
+        if(onClickConnectionPoint == null)
         {
-            node.Drag(delta);
+            onClickConnectionPoint = OnClickConnectionPoint;
         }
+
+        inPoint = new ConnectionPoint(node, ConnectionPointType.In, OnClickConnectionPoint);
     }
 
-    public override void Draw()
+    public void Draw()
     {
-        base.Draw();
-        inPoint.Draw();
+        if (GUILayout.Button("Add Option"))
+        {
+            AddOption();
+        }
 
+        GUILayout.BeginVertical();
 
         foreach(OptionNode node in optionNodes)
         {
             node.Draw();
         }
 
-        if(GUI.Button(new Rect(rect.x + padding * 2.0f, rect.y + padding * 2.0f, 100, 25), "Add Option"))
-        {
-            AddOption();
-        }
-
-        rect.height = (optionNodes.Count * 100.0f) + 75.0f;
+        GUILayout.EndVertical();
     }
 
     private void AddOption()
@@ -69,9 +64,7 @@ public class OptionsDialogueNode : DialogueNode
 
         if(count < 4)
         {
-            optionStartPos = new Vector2(rect.x + padding, rect.y + padding * 5);
-            Vector2 pos = new Vector2(optionStartPos.x, optionStartPos.y + (count * 101));
-            OptionNode node = new OptionNode(count + 1, pos, rect.width - padding * 2.0f, 100.0f, optionNodeStyle, RemoveOption, outPointStyle, onClickOutPoint);
+            OptionNode node = new OptionNode(count + 1, optionNodeStyle, optionNodeStyle, RemoveOption, onClickConnectionPoint);
             optionNodes.Add(node);
         }
     }
@@ -84,20 +77,14 @@ public class OptionsDialogueNode : DialogueNode
         {
             if (i == index) continue;
             int tempCount = temp.Count;
-            optionStartPos = new Vector2(rect.x + padding, rect.y + padding * 5);
-            Vector2 pos = new Vector2(optionStartPos.x, optionStartPos.y + (tempCount * 101));
-            optionNodes[i].rect.position = pos;
             optionNodes[i].title = "Option " + (tempCount + 1);
             temp.Add(optionNodes[i]);
         }
 
-        // Removes the connection associated with this node.
-        if (OnRemoveOptionNode != null) OnRemoveOptionNode(option);
-
         optionNodes = temp;
     }
 
-    public override bool ContainsConnection(ConnectionPoint point)
+    public bool ContainsConnection(ConnectionPoint point)
     {
         bool optionContainsConnection = false;
         for(int i = 0; i < optionNodes.Count; i++)
@@ -108,14 +95,14 @@ public class OptionsDialogueNode : DialogueNode
         return (point == inPoint) || optionContainsConnection;
     }
 
-    public override IDialogueContext GetDialogueContext()
+    public IDialogueContext GetDialogueContext()
     {
         int n = optionNodes.Count;
         DialogueOption[] options = new DialogueOption[n];
         for(int i = 0; i < n; i++)
         {
             OptionNode current = optionNodes[i];
-            options[i] = new DialogueOption(current.text, current.endConversation, current.proceedToNextSpeaker);
+            options[i] = new DialogueOption(current.text, current.proceedToNextSpeaker);
         }
 
         OptionsDialogue dialogue = ScriptableObject.CreateInstance<OptionsDialogue>();
@@ -124,18 +111,28 @@ public class OptionsDialogueNode : DialogueNode
         return dialogue;
     }
 
-    public override bool HasInternalChildren()
+    public void DrawConnections()
     {
-        return true;
+        inPoint.Draw();
+
+        foreach(OptionNode node in optionNodes)
+        {
+            node.DrawConnections();
+        }
     }
 
-    public override Node[] GetInternalChildren()
-    {
-        return optionNodes.ToArray();
-    }
+    //public override bool HasInternalChildren()
+    //{
+    //    return true;
+    //}
 
-    public override int GetInternalChildCount()
-    {
-        return optionNodes.Count;
-    }
+    //public override Node[] GetInternalChildren()
+    //{
+    //    return optionNodes.ToArray();
+    //}
+
+    //public override int GetInternalChildCount()
+    //{
+    //    return optionNodes.Count;
+    //}
 }

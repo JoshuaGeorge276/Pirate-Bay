@@ -68,10 +68,9 @@ public class DialogueOption
     public bool endConversation;
     public bool proceedToNextSpeaker;
 
-    public DialogueOption(string dialogue, bool endConvo, bool proceedToNextSpeaker)
+    public DialogueOption(string dialogue, bool proceedToNextSpeaker)
     {
         this.dialogue = dialogue;
-        endConversation = endConvo;
         this.proceedToNextSpeaker = proceedToNextSpeaker;
     }
 

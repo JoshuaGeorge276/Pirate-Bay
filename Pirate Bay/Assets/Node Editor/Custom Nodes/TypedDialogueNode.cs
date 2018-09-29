@@ -1,52 +1,68 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System;
-using System.IO;
 
-public class TypedDialogueNode : InOutNode
+[System.Serializable]
+public class TypedDialogueNode : DialogueData
 {
+    // Dialogue Data
+    [SerializeField]
+    private DialogueTypes.Type type = DialogueTypes.Type.Greeting;
 
+    // Draw Data
+    [SerializeField]
     private const float padding = 10.0f;
 
-    [SerializeField]
-    DialogueTypes.Type type = DialogueTypes.Type.Greeting;
+    // Connection Points
+    private ConnectionPoint inPoint;
+    private ConnectionPoint outPoint;
 
-
-    public TypedDialogueNode(Vector2 position, float width, float height, GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode, GUIStyle inPointStyle, GUIStyle outPointStyle, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint) : base(position, width, height, nodeStyle, selectedStyle, OnClickRemoveNode, inPointStyle, outPointStyle, OnClickInPoint, OnClickOutPoint)
+    public TypedDialogueNode()
     {
-        title = "Typed Dialogue";
+    }
+    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint)
+    {
+        inPoint = new ConnectionPoint(node, ConnectionPointType.In, OnClickConnectionPoint);
+        outPoint = new ConnectionPoint(node, ConnectionPointType.Out, OnClickConnectionPoint);
     }
 
-    public override void Draw() 
+    public void Draw() 
     {
-        base.Draw();
-        Rect enumOptions = new Rect(rect.x + padding, rect.y + 20.0f, rect.width - padding * 2, 20.0f);
-        type = (DialogueTypes.Type)EditorGUI.EnumPopup(enumOptions, type);
-
+        type = (DialogueTypes.Type)EditorGUILayout.EnumPopup(type);
     }
 
-    public override bool HasInternalChildren()
-    {
-        return false;
-    }
-
-    public override IDialogueContext GetDialogueContext()
+    public IDialogueContext GetDialogueContext()
     {
         DialogueOfType dialogue = ScriptableObject.CreateInstance<DialogueOfType>();
         dialogue.Init(type);
         return dialogue;
     }
 
-    public override Node[] GetInternalChildren()
+    public bool ContainsConnection(ConnectionPoint point)
     {
-        // Scripted Dialogue Node has no internal children. This should not be called unless has internal children is true.
-        throw new Exception("Scripted Dialogue Node has no internal children. This method should not be called unless has internal children is true");
+        return (inPoint == point) || (outPoint == point);
     }
 
-    public override int GetInternalChildCount()
+    public void DrawConnections()
     {
-        return 0;
+        inPoint.Draw();
+        outPoint.Draw();
     }
+
+    //public override bool HasInternalChildren()
+    //{
+    //    return false;
+    //}
+
+    //public override Node[] GetInternalChildren()
+    //{
+    //    // Scripted Dialogue Node has no internal children. This should not be called unless has internal children is true.
+    //    throw new Exception("Scripted Dialogue Node has no internal children. This method should not be called unless has internal children is true");
+    //}
+
+    //public override int GetInternalChildCount()
+    //{
+    //    return 0;
+    //}
+
 }

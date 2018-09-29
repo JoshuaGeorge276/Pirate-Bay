@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
+[System.Serializable]
 public class Connection
 {
     public ConnectionPoint inPoint;

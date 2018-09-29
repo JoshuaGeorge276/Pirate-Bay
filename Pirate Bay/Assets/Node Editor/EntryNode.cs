@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class EntryNode : Node
+[System.Serializable]
+public class EntryNode : ConnectionNode
 {
     public ConnectionPoint outPoint;
 
-    public EntryNode(Vector2 position, float width, float height, GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode, GUIStyle outPointStyle, Action<ConnectionPoint> OnClickOutPoint) : base(position, width, height, nodeStyle, selectedStyle, OnClickRemoveNode)
+    public EntryNode(Vector2 position, float width, float height, GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode, Action<ConnectionPoint> OnClickOutPoint) : base(position, width, height, nodeStyle, selectedStyle, OnClickRemoveNode)
     {
         title = "Entry";
-        outPoint = new ConnectionPoint(this, ConnectionPointType.Out, outPointStyle, OnClickOutPoint);
+        outPoint = new ConnectionPoint(this, ConnectionPointType.Out, OnClickOutPoint);
     }
 
     public override bool ContainsConnection(ConnectionPoint point)

@@ -14,17 +14,4 @@ MonoBehaviour:
   title: Test Conversation!
   contexts:
   - {fileID: 11400000, guid: c1deb356a6889d84181fe1a373feaab8, type: 2}
-  - {fileID: 11400000, guid: 6d4aa084ba406ba4c8e50ce02508a775, type: 2}
-  - {fileID: 11400000, guid: a998d00a854869d448bf374f067d7074, type: 2}
-  - {fileID: 11400000, guid: 41e17bc82fd1bd04da27ddb560dfbccd, type: 2}
-  - {fileID: 11400000, guid: b4ba231a95af60c47b99f230db522784, type: 2}
-  - {fileID: 11400000, guid: 610709662fc76d64c888b67c8642758b, type: 2}
-  - {fileID: 11400000, guid: 0f000f29aeb368c488331f35344f48f2, type: 2}
-  - {fileID: 11400000, guid: 2313634dc1952364297b3d1d778980a4, type: 2}
-  - {fileID: 11400000, guid: 5b4b34bf4e3257e4c9c0a6b45c3329af, type: 2}
-  - {fileID: 11400000, guid: d4b4b3580b8c3cc409d2e02e7964fe8a, type: 2}
-  - {fileID: 11400000, guid: 9910aa9584ff19b47b33c40921c6ed7a, type: 2}
-  - {fileID: 11400000, guid: c19e1f6b3a3fbe643b1e16577b2099d4, type: 2}
-  - {fileID: 11400000, guid: 7d8a51e9b489af0409f2ce3cc8432980, type: 2}
-  - {fileID: 11400000, guid: a372876955104ac468f160c76c287c22, type: 2}
-  childCounts: 0400000001000000010000000200000001000000010000000100000001000000010000000200000001000000010000000100000001000000
+  childCounts: 01000000

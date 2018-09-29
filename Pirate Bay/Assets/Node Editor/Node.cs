@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
+[System.Serializable]
 public abstract class Node
 {
     public Rect rect;
@@ -15,8 +16,24 @@ public abstract class Node
 
     public Action<Node> OnRemoveNode;
 
+    [SerializeField]
     protected GUIStyle titleStyle;
+    [SerializeField]
     protected Rect titleRect;
+
+    public Node(GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode)
+    {
+        title = "Node";
+        titleStyle = new GUIStyle();
+        titleStyle.alignment = TextAnchor.UpperCenter;
+        titleStyle.fontStyle = FontStyle.Bold;
+        titleStyle.fontSize = 14;
+        rect = new Rect();
+        style = nodeStyle;
+        defaultNodeStyle = nodeStyle;
+        selectedNodeStyle = selectedStyle;
+        OnRemoveNode = OnClickRemoveNode;
+    }
 
     public Node(Vector2 position, float width, float height, GUIStyle nodeStyle, GUIStyle selectedStyle, Action<Node> OnClickRemoveNode)
     {
@@ -105,6 +122,4 @@ public abstract class Node
             OnRemoveNode(this);
         }
     }
-
-    public abstract bool ContainsConnection(ConnectionPoint point);
 }

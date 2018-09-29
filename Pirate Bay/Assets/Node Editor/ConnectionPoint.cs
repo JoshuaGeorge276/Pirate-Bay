@@ -1,27 +1,44 @@
 ﻿using System;
 using UnityEngine;
+using UnityEditor;
 
 public enum ConnectionPointType { In, Out }
 
+[System.Serializable]
 public class ConnectionPoint
 {
+    public Node node;
+
     public Rect rect;
 
     public ConnectionPointType type;
 
-    public Node node;
+    private GUIStyle style;
 
-    public GUIStyle style;
+    private Action<ConnectionPoint> OnClickConnectionPoint;
 
-    public Action<ConnectionPoint> OnClickConnectionPoint;
-
-    public ConnectionPoint(Node node, ConnectionPointType type, GUIStyle style, Action<ConnectionPoint> OnClickConnectionPoint)
+    public ConnectionPoint(Node node, ConnectionPointType type, Action<ConnectionPoint> OnClickConnectionPoint)
     {
         this.node = node;
         this.type = type;
-        this.style = style;
-        this.OnClickConnectionPoint = OnClickConnectionPoint;
         rect = new Rect(0, 0, 10f, 20f);
+
+        style = new GUIStyle();
+        style.border = new RectOffset(4, 4, 12, 12);
+
+        switch (type)
+        {
+            case ConnectionPointType.In:
+                style.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn left.png") as Texture2D;
+                style.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn left on.png") as Texture2D;
+                break;
+            case ConnectionPointType.Out:
+                style.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn right.png") as Texture2D;
+                style.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn right on.png") as Texture2D;
+                break;
+        }
+
+        this.OnClickConnectionPoint = OnClickConnectionPoint;
     }
 
     public void Draw()
