@@ -6,6 +6,10 @@ using UnityEngine;
 [System.Serializable]
 public class OptionsDialogueNode : DialogueData
 {
+    private const string title = "Options Dialogue";
+
+    public List<OptionNode> optionNodes;
+
     public ConnectionPoint inPoint;
 
     private GUIStyle optionNodeStyle;
@@ -16,11 +20,11 @@ public class OptionsDialogueNode : DialogueData
     [SerializeField]
     private Action<ConnectionPoint> onClickOutPoint;
     [SerializeField]
-    public List<OptionNode> optionNodes;
-    [SerializeField]
-    private Action<Node> onRemoveOptionNode;
+    private Action<ConnectionNode> onRemoveOptionNode;
 
     private Action<ConnectionPoint> onClickConnectionPoint;
+
+    private Node parentNode;
 
     public OptionsDialogueNode()
     {
@@ -31,11 +35,21 @@ public class OptionsDialogueNode : DialogueData
         optionNodes = new List<OptionNode>(4);
     }
 
-    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint)
+    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint, Action<ConnectionNode> OnRemoveConnections)
     {
         if(onClickConnectionPoint == null)
         {
             onClickConnectionPoint = OnClickConnectionPoint;
+        }
+
+        if(parentNode == null)
+        {
+            parentNode = node;
+        }
+
+        if(onRemoveOptionNode == null)
+        {
+            onRemoveOptionNode = OnRemoveConnections;
         }
 
         inPoint = new ConnectionPoint(node, ConnectionPointType.In, OnClickConnectionPoint);
@@ -58,13 +72,13 @@ public class OptionsDialogueNode : DialogueData
         GUILayout.EndVertical();
     }
 
-    private void AddOption()
+    public void AddOption()
     {
         int count = optionNodes.Count;
 
         if(count < 4)
         {
-            OptionNode node = new OptionNode(count + 1, optionNodeStyle, optionNodeStyle, RemoveOption, onClickConnectionPoint);
+            OptionNode node = new OptionNode(count + 1, parentNode, optionNodeStyle, optionNodeStyle, RemoveOption, onClickConnectionPoint);
             optionNodes.Add(node);
         }
     }
@@ -73,11 +87,12 @@ public class OptionsDialogueNode : DialogueData
     {
         int index = optionNodes.FindIndex((i) => i == option);
         List<OptionNode> temp = new List<OptionNode>(4);
+        onRemoveOptionNode(optionNodes[index]);
         for(int i = 0; i < optionNodes.Count; i++)
         {
             if (i == index) continue;
             int tempCount = temp.Count;
-            optionNodes[i].title = "Option " + (tempCount + 1);
+            optionNodes[i].UpdateOrder(tempCount + 1);
             temp.Add(optionNodes[i]);
         }
 
@@ -120,6 +135,28 @@ public class OptionsDialogueNode : DialogueData
             node.DrawConnections();
         }
     }
+
+    public string GetTitle()
+    {
+        return title;
+    }
+
+    public ConnectionPoint GetInPoint()
+    {
+        return inPoint;
+    }
+
+    // Doesn't contain any out points. I know this isnt a good implementation but must stick with it for now.
+    public ConnectionPoint GetOutPoint()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetChildCount()
+    {
+        return optionNodes.Count;
+    }
+
 
     //public override bool HasInternalChildren()
     //{

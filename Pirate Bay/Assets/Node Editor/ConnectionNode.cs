@@ -13,4 +13,8 @@ public abstract class ConnectionNode : Node {
     }
 
     public abstract bool ContainsConnection(ConnectionPoint point);
+
+    public abstract ConnectionPoint GetInPoint();
+
+    public abstract ConnectionPoint GetOutPoint();
 }

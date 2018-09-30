@@ -441,7 +441,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSpeaker: {fileID: 1410758098}
   npcSpeaker: {fileID: 1191309590}
-  layout: {fileID: 11400000, guid: 95db447800895594ab6e8ad1fe83c061, type: 2}
+  layout: {fileID: 0}
 --- !u!4 &498341782
 Transform:
   m_ObjectHideFlags: 0

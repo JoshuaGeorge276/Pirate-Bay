@@ -14,6 +14,7 @@ public class NodeBasedEditor : EditorWindow
     private GUIStyle selectedNodeStyle;
     private GUIStyle inPointStyle;
     private GUIStyle outPointStyle;
+    private GUIStyle titleStyle;
 
     private ConnectionPoint selectedInPoint;
     private ConnectionPoint selectedOutPoint;
@@ -30,6 +31,13 @@ public class NodeBasedEditor : EditorWindow
 
     private void OnEnable()
     {
+        titleStyle = GUIStyle.none;
+        titleStyle.normal.background = null;
+        titleStyle.active.background = null;
+        titleStyle.alignment = TextAnchor.UpperCenter;
+        titleStyle.fontSize = 32;
+        titleStyle.fontStyle = FontStyle.Bold;
+
         nodeStyle = new GUIStyle();
         nodeStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node1.png") as Texture2D;
         nodeStyle.border = new RectOffset(12, 12, 12, 12);
@@ -54,7 +62,7 @@ public class NodeBasedEditor : EditorWindow
 
         DrawNodes();
         DrawConnections();
-        DrawButtons();
+        DrawOverlay();
 
         DrawConnectionLine(Event.current);
 
@@ -89,22 +97,21 @@ public class NodeBasedEditor : EditorWindow
         Handles.EndGUI();
     }
 
-    string filePath = "Enter file path";
+    string convoTitle = "New Conversation";
 
-    private void DrawButtons()
+    private void DrawOverlay()
     {
-        filePath = GUI.TextField(new Rect(220, 60, 200, 15), filePath);
+        GUILayout.Space(20);
+        convoTitle = GUILayout.TextField(convoTitle, titleStyle);
 
-        if (GUI.Button(new Rect(10, 10, 200, 50), "Save"))
+        if (GUI.Button(new Rect(Screen.width - 225, Screen.height - 100, 200, 50), "Save"))
         {
-            // TODO:
-            //SaveDialogueTree();
+            SaveDialogueTree();
         }
 
-        if(GUI.Button(new Rect(220, 10, 200, 50), "Load"))
+        if(GUI.Button(new Rect(Screen.width - 450, Screen.height - 100, 200, 50), "Load"))
         {
-            // TODO:
-            //LoadDialogueTree(filePath);
+            LoadDialogueTree();
         }
     }
 
@@ -270,17 +277,17 @@ public class NodeBasedEditor : EditorWindow
 
     public DialogueNode<ScriptedDialogueNode> CreateScriptedDialogueNode(Vector2 mousePosition)
     {
-        return new DialogueNode<ScriptedDialogueNode>(mousePosition, 300, 150, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint);
+        return new DialogueNode<ScriptedDialogueNode>(mousePosition, 300, 150, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint, RemoveConnections);
     }
 
     public DialogueNode<TypedDialogueNode> CreateTypedDialogueNode(Vector2 mousePosition)
     {
-        return new DialogueNode<TypedDialogueNode>(mousePosition, 125, 75, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint);
+        return new DialogueNode<TypedDialogueNode>(mousePosition, 125, 75, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint, RemoveConnections);
     }
 
     public DialogueNode<OptionsDialogueNode> CreateOptionsDialogueNode(Vector2 mousePosition)
     {
-        return new DialogueNode<OptionsDialogueNode>(mousePosition, 400, 475, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint);
+        return new DialogueNode<OptionsDialogueNode>(mousePosition, 400, 475, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint, RemoveConnections);
     }
 
     private void OnClickConnectionPoint(ConnectionPoint point)
@@ -374,27 +381,32 @@ public class NodeBasedEditor : EditorWindow
         selectedOutPoint = null;
     }
 
-    /*
-
     private void SaveDialogueTree()
     {
+        var path = EditorUtility.SaveFilePanel("Save Dialogue Tree", Application.dataPath, convoTitle, "json");
+
+        SerializedNodeEditor serializedData = new SerializedNodeEditor();
+
         TreeList<IDialogueContext> dialogueTree = new TreeList<IDialogueContext>();
-        DialogueNode currentNode = (DialogueNode)GetConnectedNode(entryNode);
-        Queue<DialogueNode> nodesToVist = new Queue<DialogueNode>();
+        ConnectionNode currentNode = (ConnectionNode)GetConnectedNode(entryNode);
+        Queue<ConnectionNode> nodesToVist = new Queue<ConnectionNode>();
         List<IDialogueContext> contexts = new List<IDialogueContext>(nodes.Count);
         List<int> childCounts = new List<int>(nodes.Count);
         nodesToVist.Enqueue(currentNode);
         while (nodesToVist.Count > 0)
         {
-            DialogueNode tmp = nodesToVist.Dequeue();
-            VisitNode(tmp, dialogueTree, contexts, childCounts);
-            if (tmp.HasInternalChildren())
+            DialogueNode tmp = (DialogueNode)nodesToVist.Dequeue();
+            VisitNode(tmp.GetData(), dialogueTree, contexts, childCounts);
+            serializedData.Insert(tmp.GetData().GetTitle(), tmp);
+
+            if(tmp.GetType() == typeof(DialogueNode<OptionsDialogueNode>))
             {
-                Node[] children = tmp.GetInternalChildren();
-                foreach(Node node in children)
+                DialogueNode<OptionsDialogueNode> castNode = (DialogueNode<OptionsDialogueNode>)tmp;
+                ConnectionNode[] children = castNode.Data.optionNodes.ToArray();
+                foreach (ConnectionNode node in children)
                 {
-                    DialogueNode connectedNode = (DialogueNode)GetConnectedNode(node);
-                    if(connectedNode != null)
+                    ConnectionNode connectedNode = (ConnectionNode)GetConnectedNode(node);
+                    if (connectedNode != null)
                     {
                         nodesToVist.Enqueue(connectedNode);
                     }
@@ -403,7 +415,7 @@ public class NodeBasedEditor : EditorWindow
             }
             else
             {
-                DialogueNode connectedNode = (DialogueNode)GetConnectedNode(tmp);
+                ConnectionNode connectedNode = (ConnectionNode)GetConnectedNode(tmp);
                 if(connectedNode != null)
                 {
                     nodesToVist.Enqueue(connectedNode);
@@ -413,45 +425,18 @@ public class NodeBasedEditor : EditorWindow
         }
 
         ConversationLayout asset = CreateInstance<ConversationLayout>();
-        asset.Init("Test Conversation!", contexts, childCounts);
+        asset.Init(convoTitle, contexts, childCounts);
 
-        AssetDatabase.CreateAsset(asset, "Assets/ConversationLayouts/NewConversationLayout.asset");
+        AssetDatabase.CreateAsset(asset, "Assets/ConversationLayouts/" + convoTitle + ".asset");
         AssetDatabase.SaveAssets();
 
         EditorUtility.FocusProjectWindow();
 
         Selection.activeObject = asset;
 
-        List<ScriptedDialogueNode> scriptedNodes = new List<ScriptedDialogueNode>();
-        List<TypedDialogueNode> typedNodes = new List<TypedDialogueNode>();
-        List<OptionsDialogueNode> optionsNodes = new List<OptionsDialogueNode>();
+        string json = JsonUtility.ToJson(serializedData);
 
-        foreach(DialogueNode node in nodes)
-        {
-            switch (node.title)
-            {
-                case "Scripted Dialogue":
-                    scriptedNodes.Add((ScriptedDialogueNode)node);
-                    break;
-                case "Typed Dialogue":
-                    typedNodes.Add((TypedDialogueNode)node);
-                    break;
-                case "Dialogue with Options":
-                    optionsNodes.Add((OptionsDialogueNode)node);
-                    break;
-            }
-        }
-
-        DialogueTreeData data = new DialogueTreeData();
-        data.scriptedNodes = scriptedNodes;
-        data.typedDialogueNodes = typedNodes;
-        data.optionsNodes = optionsNodes;
-        data.entryNode = entryNode;
-        //data.connections = connections;
-
-        string json = JsonUtility.ToJson(data);
-
-        StreamWriter writer = new StreamWriter("Node.json");
+        StreamWriter writer = new StreamWriter(path);
         try
         {
             writer.Write(json);
@@ -463,8 +448,28 @@ public class NodeBasedEditor : EditorWindow
 
     }
 
-    private void LoadDialogueTree(string path)
+    private void LoadDialogueTree()
     {
+        var path = EditorUtility.OpenFilePanel("Load Dialogue Tree", Application.dataPath, "json");
+
+        if (nodes != null)
+        {
+            nodes.Clear();
+        }
+        else
+        {
+            nodes = new List<ConnectionNode>();
+        }
+
+        if(connections != null)
+        {
+            connections.Clear();
+        }
+        else
+        {
+            connections = new List<Connection>();
+        }
+
         StreamReader reader = new StreamReader(path);
         string json = "";
         try
@@ -476,17 +481,38 @@ public class NodeBasedEditor : EditorWindow
             reader.Close();
         }
 
-        SerializedDialogueNodeEditor serializedData = JsonUtility.FromJson<SerializedDialogueNodeEditor>(json);
+        SerializedNodeEditor serializedData = JsonUtility.FromJson<SerializedNodeEditor>(json);
 
-        DialogueNodeEditorDeserializer deserializer = new DialogueNodeEditorDeserializer(this, serializedData);
+        NodeEditorDeserializer deserializer = new NodeEditorDeserializer(serializedData, this);
 
-        Node prevNode = entryNode;
+        ConnectionNode prevNode = entryNode;
 
-        for(int i = 0; i < deserializer.NodeCount; i++)
+        Queue<ConnectionNode> childrenNodes = new Queue<ConnectionNode>();
+
+        for(int i = 0; i < deserializer.count; i++)
         {
-            DialogueNode node = deserializer.Next();
-            nodes.Add(node);
+            ConnectionNode node;
+            if(childrenNodes.Count > 0)
+            {
+                node = childrenNodes.Dequeue();
+            }
+            else
+            {
+                node = deserializer.GetNode(i, out childrenNodes);
+                nodes.Add(node);
+            }
+            
+            selectedOutPoint = prevNode.GetOutPoint();
+            selectedInPoint = node.GetInPoint();
             CreateConnection();
+            if(childrenNodes.Count > 0)
+            {
+                prevNode = childrenNodes.Dequeue();
+            }
+            else
+            {
+                prevNode = node;
+            }
         }
 
         Debug.Log("Loading Done");
@@ -504,79 +530,93 @@ public class NodeBasedEditor : EditorWindow
         return null;
     }
 
-    private void VisitNode(DialogueNode node, TreeList<IDialogueContext> tree, List<IDialogueContext> contexts, List<int> childCounts)
+    private void VisitNode(DialogueData data, TreeList<IDialogueContext> tree, List<IDialogueContext> contexts, List<int> childCounts)
     {
-        IDialogueContext context = node.GetDialogueContext();
-        int childCount = (node.HasInternalChildren() ? node.GetInternalChildCount() : 1);
+        IDialogueContext context = data.GetDialogueContext();
+        int childCount = data.GetChildCount();
         contexts.Add(context);
         childCounts.Add(childCount);
         tree.Insert(new TreeNode<IDialogueContext>(context, childCount));
     }
 
-
-    [System.Serializable]
-    public class SerializedDialogueNodeEditor
+    public class NodeEditorDeserializer
     {
-        
-        // Order of list defines order that the nodes should be created.
-        public List<SerializedNodeData> nodeData;
+        public int count;
 
-        public List<SerializedScriptedNode> scriptedNodes;
-        public List<SerializedTypedNode> typedNodes;
-        public List<SerializedOptionsNode> optionNodes;
-    }
-
-    public class DialogueNodeEditorDeserializer
-    {
+        private Queue<SerializedScriptedNode> scriptedNodes;
+        private Queue<SerializedTypedNode> typedNodes;
+        private Queue<SerializedOptionsNode> optionNodes;
         private NodeBasedEditor editor;
 
-        private List<SerializedNodeData> nodeData;
-
-        private List<SerializedScriptedNode> scriptedNodes;
-        private List<SerializedTypedNode> typedNodes;
-        private List<SerializedOptionsNode> optionNodes;
-
-        public int NodeCount { get { return nodeData.Count; } }
-
-        private int currentNodeIndex, scriptedNodeIndex, typedNodeIndex, optionsNodeIndex;
-
-        public DialogueNodeEditorDeserializer(NodeBasedEditor nodeEditor, SerializedDialogueNodeEditor serializedData)
+        public NodeEditorDeserializer(SerializedNodeEditor data, NodeBasedEditor editor)
         {
-            editor = nodeEditor;
-            nodeData = serializedData.nodeData;
-            scriptedNodes = serializedData.scriptedNodes;
-            typedNodes = serializedData.typedNodes;
-            optionNodes = serializedData.optionNodes;
+            scriptedNodes = new Queue<SerializedScriptedNode>(data.scriptedNodes);
+            typedNodes = new Queue<SerializedTypedNode>(data.typedNodes);
+            optionNodes = new Queue<SerializedOptionsNode>(data.optionNodes);
+            this.editor = editor;
 
-            currentNodeIndex = scriptedNodeIndex = typedNodeIndex = optionsNodeIndex = 0;
+            count = data.count;
         }
 
-        public DialogueNode Next()
+        public ConnectionNode GetNode(int index, out Queue<ConnectionNode> children)
         {
-            SerializedNodeData data = nodeData[currentNodeIndex++];
+            bool inScripted = scriptedNodes.Count > 0;
+            bool inTyped = typedNodes.Count > 0;
+            bool inOptions = optionNodes.Count > 0;
 
-            switch (data.nodeType)
+            children = new Queue<ConnectionNode>();
+
+            if (inScripted)
             {
-                case "Scripted Dialogue":
+                int order = scriptedNodes.Peek().order;
+                if (order == index)
+                {
+                    SerializedScriptedNode data = scriptedNodes.Dequeue();
+                    DialogueNode<ScriptedDialogueNode> node = editor.CreateScriptedDialogueNode(data.position);
+                    node.Data.sentences = data.sentences;
+                    return node;
+                }else if(index > order)
+                {
+                    inScripted = false;
+                }
+            }
+
+            if (inTyped)
+            {
+                int order = typedNodes.Peek().order;
+                if(order == index)
+                {
+                    SerializedTypedNode data = typedNodes.Dequeue();
+                    DialogueNode<TypedDialogueNode> node = editor.CreateTypedDialogueNode(data.position);
+                    node.Data.type = data.type;
+                    return node;
+                }else if(index > order)
+                {
+                    inTyped = false;
+                }
+            }
+
+            if (inOptions)
+            {
+                int order = optionNodes.Peek().order;
+                if(order == index)
+                {
+                    SerializedOptionsNode data = optionNodes.Dequeue();
+                    DialogueNode<OptionsDialogueNode> node = editor.CreateOptionsDialogueNode(data.position);
+                    List<SerializedOptionNode> optionsData = data.optionNodes;
+                    for(int i = 0; i < data.optionsCount; i++)
                     {
-                        ScriptedDialogueNode node = editor.CreateScriptedDialogueNode(data.mousePosition);
-                        node.sentences = scriptedNodes[scriptedNodeIndex++].sentences;
-                        return node;
-                    }
-                    
-                case "Typed Dialogue":
-                    {
-                        TypedDialogueNode node = editor.CreateTypedDialogueNode(data.mousePosition);
-                        node.type = typedNodes[typedNodeIndex++].type;
-                        return node;
+                        node.Data.AddOption();
+                        node.Data.optionNodes[i].text = optionsData[i].sentence;
+                        node.Data.optionNodes[i].proceedToNextSpeaker = optionsData[i].goToNextSpeaker;
+                        children.Enqueue(node.Data.optionNodes[i]);
                     }
 
-                case "Dialogue with Options":
-                    {
-                        OptionsDialogueNode node = editor.CreateOptionsDialogueNode(data.mousePosition);
-                        node.optionNodes = optionNodes[optionsNodeIndex++].optionNodes;
-                    }
-                    break;
+                    return node;
+                }else if(index > order)
+                {
+                    inOptions = false;
+                }
             }
 
             return null;
@@ -585,29 +625,123 @@ public class NodeBasedEditor : EditorWindow
 
 
     [System.Serializable]
-    public struct SerializedNodeData
+    public class SerializedNodeEditor
     {
-        public Vector2 mousePosition;
-        public string nodeType;
+        int order;
+        public int count;
+
+        public List<SerializedScriptedNode> scriptedNodes;
+        public List<SerializedTypedNode> typedNodes;
+        public List<SerializedOptionsNode> optionNodes;
+
+        public SerializedNodeEditor()
+        {
+            scriptedNodes = new List<SerializedScriptedNode>();
+            typedNodes = new List<SerializedTypedNode>();
+            optionNodes = new List<SerializedOptionsNode>();
+
+            order = count = 0;
+        }
+
+        public void Insert(string title, DialogueNode node)
+        {
+            switch (title)
+            {
+                case "Scripted Dialogue":
+                    Insert((DialogueNode<ScriptedDialogueNode>)node);
+                    break;
+                case "Typed Dialogue":
+                    Insert((DialogueNode<TypedDialogueNode>)node);
+                    break;
+                case "Options Dialogue":
+                    Insert((DialogueNode<OptionsDialogueNode>)node);
+                    break;
+            }
+        }
+
+        private void Insert(DialogueNode<ScriptedDialogueNode> node)
+        {
+            scriptedNodes.Add(new SerializedScriptedNode(order++, node.Position, node.Data.sentences));
+            count++;
+        }
+
+        private void Insert(DialogueNode<TypedDialogueNode> node)
+        {
+            typedNodes.Add(new SerializedTypedNode(order++, node.Position, node.Data.type));
+            count++;
+        }
+
+        private void Insert(DialogueNode<OptionsDialogueNode> node)
+        {
+            List<SerializedOptionNode> options = new List<SerializedOptionNode>();
+            foreach (OptionNode option in node.Data.optionNodes)
+            {
+                options.Add(new SerializedOptionNode(option.text, option.proceedToNextSpeaker));
+            }
+            optionNodes.Add(new SerializedOptionsNode(order++, node.Position, options, options.Count));
+            count++;
+        }
     }
+
 
     [System.Serializable]
     public struct SerializedScriptedNode
     {
+        public Vector2 position;
+        public int order;
         public List<string> sentences;
+
+        public SerializedScriptedNode(int order, Vector2 pos, List<string> sentences)
+        {
+            this.order = order;
+            this.position = pos;
+            this.sentences = sentences;
+        }
     }
 
     [System.Serializable]
     public struct SerializedTypedNode
     {
+        public Vector2 position;
+        public int order;
         public DialogueTypes.Type type;
+
+        public SerializedTypedNode(int order, Vector2 pos, DialogueTypes.Type type)
+        {
+            this.order = order;
+            this.position = pos;
+            this.type = type;
+        }
     }
 
+    [System.Serializable]
     public struct SerializedOptionsNode
     {
-        public List<OptionNode> optionNodes;
+        public Vector2 position;
+        public int order;
+        public List<SerializedOptionNode> optionNodes;
         public int optionsCount;
+
+        public SerializedOptionsNode(int order, Vector2 pos, List<SerializedOptionNode> optionNodes, int optionsCount)
+        {
+            this.order = order;
+            this.position = pos;
+            this.optionNodes = optionNodes;
+            this.optionsCount = optionsCount;
+        }
     }
 
-    */
+    [System.Serializable]
+    public struct SerializedOptionNode
+    {
+        public string sentence;
+        public bool goToNextSpeaker;
+
+        public SerializedOptionNode(string sentence, bool goToNextSpeaker)
+        {
+            this.sentence = sentence;
+            this.goToNextSpeaker = goToNextSpeaker;
+        }
+    }
+
 }

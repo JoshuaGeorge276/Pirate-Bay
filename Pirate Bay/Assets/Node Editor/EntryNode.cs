@@ -25,4 +25,15 @@ public class EntryNode : ConnectionNode
         base.Draw();
         outPoint.Draw();
     }
+
+    // Does not have an inpoint. I know this is a bad implementation but must stick with it for now.
+    public override ConnectionPoint GetInPoint()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override ConnectionPoint GetOutPoint()
+    {
+        return outPoint;
+    }
 }

@@ -5,7 +5,7 @@ using System;
 
 public interface DialogueData {
 
-    void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint);
+    void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint, Action<ConnectionNode> OnRemoveConnections);
 
     void Draw();
 
@@ -14,5 +14,13 @@ public interface DialogueData {
     bool ContainsConnection(ConnectionPoint point);
 
     void DrawConnections();
+
+    string GetTitle();
+
+    int GetChildCount();
+
+    ConnectionPoint GetInPoint();
+
+    ConnectionPoint GetOutPoint();
 
 }

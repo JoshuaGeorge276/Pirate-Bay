@@ -5,8 +5,10 @@ using System;
 [System.Serializable]
 public class ScriptedDialogueNode : DialogueData
 {
+    private const string title = "Scripted Dialogue";
+
     // Dialogue Data
-    private List<string> sentences = new List<string>();
+    public List<string> sentences = new List<string>();
 
     // Draw Data
     private const float padding = 10.0f;
@@ -22,7 +24,7 @@ public class ScriptedDialogueNode : DialogueData
         sentences.Add("");
     }
 
-    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint)
+    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint, Action<ConnectionNode> OnRemoveConnections)
     {
         inPoint = new ConnectionPoint(node, ConnectionPointType.In, OnClickConnectionPoint);
         outPoint = new ConnectionPoint(node, ConnectionPointType.Out, OnClickConnectionPoint);
@@ -57,6 +59,26 @@ public class ScriptedDialogueNode : DialogueData
     {
         inPoint.Draw();
         outPoint.Draw();
+    }
+
+    public string GetTitle()
+    {
+        return title;
+    }
+
+    public ConnectionPoint GetInPoint()
+    {
+        return inPoint;
+    }
+
+    public ConnectionPoint GetOutPoint()
+    {
+        return outPoint;
+    }
+
+    public int GetChildCount()
+    {
+        return 1;
     }
 
     //public override bool HasInternalChildren()

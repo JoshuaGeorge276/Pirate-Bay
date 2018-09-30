@@ -5,9 +5,10 @@ using System;
 [System.Serializable]
 public class TypedDialogueNode : DialogueData
 {
+    private const string title = "Typed Dialogue";
+
     // Dialogue Data
-    [SerializeField]
-    private DialogueTypes.Type type = DialogueTypes.Type.Greeting;
+    public DialogueTypes.Type type = DialogueTypes.Type.Greeting;
 
     // Draw Data
     [SerializeField]
@@ -20,7 +21,7 @@ public class TypedDialogueNode : DialogueData
     public TypedDialogueNode()
     {
     }
-    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint)
+    public void SetupConnectionPoints(Node node, Action<ConnectionPoint> OnClickConnectionPoint, Action<ConnectionNode> OnRemoveConnections)
     {
         inPoint = new ConnectionPoint(node, ConnectionPointType.In, OnClickConnectionPoint);
         outPoint = new ConnectionPoint(node, ConnectionPointType.Out, OnClickConnectionPoint);
@@ -47,6 +48,26 @@ public class TypedDialogueNode : DialogueData
     {
         inPoint.Draw();
         outPoint.Draw();
+    }
+
+    public string GetTitle()
+    {
+        return title;
+    }
+
+    public ConnectionPoint GetInPoint()
+    {
+        return inPoint;
+    }
+
+    public ConnectionPoint GetOutPoint()
+    {
+        return outPoint;
+    }
+
+    public int GetChildCount()
+    {
+        return 1;
     }
 
     //public override bool HasInternalChildren()
