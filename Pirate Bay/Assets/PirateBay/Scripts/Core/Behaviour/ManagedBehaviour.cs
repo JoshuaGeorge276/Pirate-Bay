@@ -11,7 +11,7 @@ namespace Core
             BehaviourManager.Instance.RegisterBehaviour(this);
         }
 
-        public abstract void ManagedUpdate(float a_fDeltaTime);
+        public virtual void ManagedUpdate(float a_fDeltaTime) {}
         public virtual void ManagedLateUpdate(float a_fDeltaTime) {}
         public virtual void ManagedFixedUpdate(float a_fDeltaTime) {}
 

@@ -6,7 +6,7 @@ public class ActorInteract : Interactable
 {
     public bool CanInteract()
     {
-        
+        return true;
     }
 
     public void Interact()
