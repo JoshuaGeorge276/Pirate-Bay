@@ -10,7 +10,8 @@ public class DialogueTypes : MonoBehaviour {
         GreetingResponse,
         Plead,
         RequestToJoinCrew,
-        Threat
+        Threat,
+        Goodbye
     }
 
     public enum Triggers

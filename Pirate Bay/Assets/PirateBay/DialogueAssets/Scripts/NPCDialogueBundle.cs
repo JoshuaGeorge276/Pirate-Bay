@@ -38,6 +38,7 @@ public class NPCDialogueBundle : ScriptableObject {
 
     public ScriptedDialogue GetDialogueOfType(DialogueTypes.Type type)
     {
-        return dialogueBundlesDic[type];
+        // If the bundles contains the key then return the dialogue but if it doesnt then return an empty scripted dialogue.
+        return (dialogueBundlesDic.ContainsKey(type)) ? dialogueBundlesDic[type] : CreateInstance<ScriptedDialogue>();
     }
 }

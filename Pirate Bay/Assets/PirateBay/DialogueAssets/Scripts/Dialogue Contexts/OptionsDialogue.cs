@@ -26,12 +26,8 @@ public class OptionsDialogue : IDialogueContext
 
     public void OptionSelected(int i)
     {
+        if (options[i].proceedToNextSpeaker) conversation.ProceedToNextSpeaker();
         conversation.LoadNextContext(i);
-        if (options[i].proceedToNextSpeaker)
-        {
-            conversation.ProceedToNextSpeaker();
-        }
-
         conversation.Next();
     }
 

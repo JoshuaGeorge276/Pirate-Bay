@@ -11,10 +11,7 @@ public class TreeList<T> {
     private int nodeCount;
 
     // Default constructor
-    public TreeList()
-    {
-
-    }
+    public TreeList() { }
 
     public TreeList(TreeNode<T> root)
     {

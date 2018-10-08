@@ -81,20 +81,4 @@ public class ScriptedDialogueNode : DialogueData
         return 1;
     }
 
-    //public override bool HasInternalChildren()
-    //{
-    //    return false;
-    //}
-
-    //public override Node[] GetInternalChildren()
-    //{
-    //    // Scripted Dialogue Node has no internal children. This should not be called unless has internal children is true.
-    //    throw new Exception("Scripted Dialogue Node has no internal children. This method should not be called unless has internal children is true");
-    //}
-
-    //public override int GetInternalChildCount()
-    //{
-    //    return 0;
-    //}
-
 }

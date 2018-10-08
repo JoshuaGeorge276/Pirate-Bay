@@ -69,12 +69,13 @@ public class Conversation : IIterable
     {
         if (context.OnlyPlayer())
         {
-            return speakers[playerSpeaker];
+            // If the current context also proceeds to next speaker then increment after returning the player speaker index.
+            return speakers[(context.ProceedToNextSpeaker()) ? playerSpeaker++ : playerSpeaker];
         }
 
         if (context.ProceedToNextSpeaker())
         {
-            return speakers[++currentSpeakerIndex % speakerCount];
+            return speakers[currentSpeakerIndex++ % speakerCount];
         }
 
         return speakers[currentSpeakerIndex % speakerCount];

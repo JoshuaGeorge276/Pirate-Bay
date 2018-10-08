@@ -396,13 +396,13 @@ public class NodeBasedEditor : EditorWindow
         while (nodesToVist.Count > 0)
         {
             DialogueNode tmp = (DialogueNode)nodesToVist.Dequeue();
-            VisitNode(tmp.GetData(), dialogueTree, contexts, childCounts);
-            serializedData.Insert(tmp.GetData().GetTitle(), tmp);
+            int childCount = 0;
 
             if(tmp.GetType() == typeof(DialogueNode<OptionsDialogueNode>))
             {
                 DialogueNode<OptionsDialogueNode> castNode = (DialogueNode<OptionsDialogueNode>)tmp;
                 ConnectionNode[] children = castNode.Data.optionNodes.ToArray();
+                childCount = children.Length;
                 foreach (ConnectionNode node in children)
                 {
                     ConnectionNode connectedNode = (ConnectionNode)GetConnectedNode(node);
@@ -410,7 +410,13 @@ public class NodeBasedEditor : EditorWindow
                     {
                         nodesToVist.Enqueue(connectedNode);
                     }
-                    continue;
+                    else
+                    {
+                        Vector2 pos = node.rect.position;
+                        DialogueNode<TypedDialogueNode> endNode = CreateTypedDialogueNode(new Vector2(pos.x + 50, pos.y));
+                        endNode.Data.type = DialogueTypes.Type.Goodbye;
+                        nodesToVist.Enqueue(endNode);
+                    }
                 }
             }
             else
@@ -418,10 +424,18 @@ public class NodeBasedEditor : EditorWindow
                 ConnectionNode connectedNode = (ConnectionNode)GetConnectedNode(tmp);
                 if(connectedNode != null)
                 {
+                    childCount = 1;
                     nodesToVist.Enqueue(connectedNode);
-                    continue;
+                }
+                else
+                {
+                    childCount = 0;
                 }
             }
+
+            childCounts.Add(childCount);
+            VisitNode(tmp.GetData(), childCount, dialogueTree, contexts);
+            serializedData.Insert(tmp.GetData().GetTitle(), tmp);
         }
 
         ConversationLayout asset = CreateInstance<ConversationLayout>();
@@ -524,12 +538,10 @@ public class NodeBasedEditor : EditorWindow
         return null;
     }
 
-    private void VisitNode(DialogueData data, TreeList<IDialogueContext> tree, List<IDialogueContext> contexts, List<int> childCounts)
+    private void VisitNode(DialogueData data, int childCount, TreeList<IDialogueContext> tree, List<IDialogueContext> contexts)
     {
         IDialogueContext context = data.GetDialogueContext();
-        int childCount = data.GetChildCount();
         contexts.Add(context);
-        childCounts.Add(childCount);
         tree.Insert(new TreeNode<IDialogueContext>(context, childCount));
     }
 
