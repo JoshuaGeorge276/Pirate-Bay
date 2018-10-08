@@ -116,22 +116,16 @@ public class GamePadDevice : IInputDevice
         {
                 case InputButtonValue.LeftTrigger:
                     return LeftTrigger.GetKeyValue();
-                    break;
                 case InputButtonValue.RightTrigger:
                     return RightTrigger.GetKeyValue();
-                    break;
                 case InputButtonValue.DPadUp:
                     return DPadAxis.YAxis.GetPositiveKeyValue();
-                    break;
                 case InputButtonValue.DPadDown:
                     return DPadAxis.YAxis.GetNegativeKeyValue();
-                    break;
                 case InputButtonValue.DPadLeft:
                     return DPadAxis.XAxis.GetPositiveKeyValue();
-                    break;
                 case InputButtonValue.DPadRight:
                     return DPadAxis.XAxis.GetNegativeKeyValue();
-                    break;
                 default:
                     return buttonValues[(int) a_value];
         }
