@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Conversation : IIterable {
+public class Conversation : IIterable
+{
+
+    private int playerSpeaker;
 
     private TreeList<IDialogueContext> dialogueTree;
     private TreeNode<IDialogueContext> currentNode;
@@ -14,9 +17,10 @@ public class Conversation : IIterable {
     private int speakerCount;
     private int currentSpeakerIndex;
 
-    public Conversation(TreeList<IDialogueContext> dialogueTree, Speaker[] speakers)
+    public Conversation(TreeList<IDialogueContext> dialogueTree, Speaker[] speakers, int playerSpeakerOrder = 0)
     {
         this.dialogueTree = dialogueTree;
+        playerSpeaker = playerSpeakerOrder;
         this.speakers = speakers;
         speakerCount = speakers.Length;
         contexts = new Queue<IDialogueContext>();
@@ -32,10 +36,10 @@ public class Conversation : IIterable {
 
     public void Next()
     {
-        if(contexts.Count > 0)
+        if (contexts.Count > 0)
         {
             IDialogueContext current = contexts.Dequeue();
-            current.Speak(this, GetCurrentSpeaker());
+            current.Speak(this, GetSpeaker(current));
         }
         else
         {
@@ -49,7 +53,7 @@ public class Conversation : IIterable {
         if (currentNode.IsLeafNode) return;
 
         TreeNode<IDialogueContext> next = currentNode.GetChild(index);
-        if(next != null)
+        if (next != null)
         {
             contexts.Enqueue(next.node);
             currentNode = next;
@@ -61,8 +65,18 @@ public class Conversation : IIterable {
         }
     }
 
-    private Speaker GetCurrentSpeaker()
+    private Speaker GetSpeaker(IDialogueContext context)
     {
+        if (context.OnlyPlayer())
+        {
+            return speakers[playerSpeaker];
+        }
+
+        if (context.ProceedToNextSpeaker())
+        {
+            return speakers[++currentSpeakerIndex % speakerCount];
+        }
+
         return speakers[currentSpeakerIndex % speakerCount];
     }
 

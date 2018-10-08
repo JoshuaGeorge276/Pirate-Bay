@@ -63,11 +63,11 @@ public class TreeNode<S>
     public S node;
     public List<TreeNode<S>> children;
 
-    public bool IsLeafNode { get { return children.Count <= 0; } }
+    public bool IsLeafNode { get { return childCount == 0; } }
 
     private int childCount;
 
-    public TreeNode(S parent, int childCount)
+    public TreeNode(S parent, int childCount = 0)
     {
         node = parent;
         this.childCount = childCount;

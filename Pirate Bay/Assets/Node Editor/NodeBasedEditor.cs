@@ -282,7 +282,7 @@ public class NodeBasedEditor : EditorWindow
 
     public DialogueNode<TypedDialogueNode> CreateTypedDialogueNode(Vector2 mousePosition)
     {
-        return new DialogueNode<TypedDialogueNode>(mousePosition, 125, 75, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint, RemoveConnections);
+        return new DialogueNode<TypedDialogueNode>(mousePosition, 250, 75, nodeStyle, selectedNodeStyle, OnClickRemoveNode, OnClickConnectionPoint, RemoveConnections);
     }
 
     public DialogueNode<OptionsDialogueNode> CreateOptionsDialogueNode(Vector2 mousePosition)
@@ -495,6 +495,7 @@ public class NodeBasedEditor : EditorWindow
             if(childrenNodes.Count > 0)
             {
                 node = childrenNodes.Dequeue();
+
             }
             else
             {
@@ -505,14 +506,7 @@ public class NodeBasedEditor : EditorWindow
             selectedOutPoint = prevNode.GetOutPoint();
             selectedInPoint = node.GetInPoint();
             CreateConnection();
-            if(childrenNodes.Count > 0)
-            {
-                prevNode = childrenNodes.Dequeue();
-            }
-            else
-            {
-                prevNode = node;
-            }
+            prevNode = node;
         }
 
         Debug.Log("Loading Done");
@@ -736,6 +730,7 @@ public class NodeBasedEditor : EditorWindow
     {
         public string sentence;
         public bool goToNextSpeaker;
+
 
         public SerializedOptionNode(string sentence, bool goToNextSpeaker)
         {

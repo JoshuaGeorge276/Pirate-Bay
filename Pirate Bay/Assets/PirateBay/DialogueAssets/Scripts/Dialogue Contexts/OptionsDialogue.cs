@@ -5,7 +5,8 @@ using UnityEngine.Events;
 using UnityEditor;
 
 [System.Serializable]
-public class OptionsDialogue : IDialogueContext {
+public class OptionsDialogue : IDialogueContext
+{
 
     [SerializeField]
     public DialogueOption[] options = new DialogueOption[4];
@@ -52,12 +53,22 @@ public class OptionsDialogue : IDialogueContext {
     private int ValidOptions()
     {
         int count = 0;
-        for(int i = 0; i < options.Length; i++)
+        for (int i = 0; i < options.Length; i++)
         {
             if (options[i].IsValid()) count++;
         }
 
         return count;
+    }
+
+    public override bool OnlyPlayer()
+    {
+        return true;
+    }
+
+    public override bool ProceedToNextSpeaker()
+    {
+        return false;
     }
 }
 

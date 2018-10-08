@@ -19,6 +19,9 @@ public class ConnectionPoint
 
     public Vector2 offset;
 
+    // Used in auto draw.
+    public Node parent;
+
     public ConnectionPoint(Node node, ConnectionPointType type, Action<ConnectionPoint> OnClickConnectionPoint)
     {
         this.node = node;
@@ -43,10 +46,12 @@ public class ConnectionPoint
         this.OnClickConnectionPoint = OnClickConnectionPoint;
     }
 
-    public ConnectionPoint(Node node, Vector2 offset, ConnectionPointType type, Action<ConnectionPoint> OnClickConnectionPoint)
+    // Use this constructor if you dont want the connection node to use the rect of the node.
+    public ConnectionPoint(Node node, Node parent, Vector2 offset, ConnectionPointType type, Action<ConnectionPoint> OnClickConnectionPoint)
     {
         this.node = node;
         this.type = type;
+        this.parent = parent;
         this.offset = offset;
         rect = new Rect(0, 0, 10f, 20f);
 
@@ -70,16 +75,18 @@ public class ConnectionPoint
 
     public void AutoDraw()
     {
-        rect.y = node.rect.y + offset.y;
+        if (parent == null) return;
+
+        rect.y = parent.rect.y + offset.y;
     
         switch (type)
         {
             case ConnectionPointType.In:
-                rect.x = node.rect.x - rect.width + 8f;
+                rect.x = parent.rect.x - rect.width + 8f;
                 break;
 
             case ConnectionPointType.Out:
-                rect.x = node.rect.x + node.rect.width - 8f;
+                rect.x = parent.rect.x + parent.rect.width - 8f;
                 break;
         }
 

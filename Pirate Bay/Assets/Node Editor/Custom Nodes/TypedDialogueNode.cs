@@ -9,6 +9,7 @@ public class TypedDialogueNode : DialogueData
 
     // Dialogue Data
     public DialogueTypes.Type type = DialogueTypes.Type.Greeting;
+    public bool proceedToNextSpeaker = true;
 
     // Draw Data
     [SerializeField]
@@ -27,15 +28,16 @@ public class TypedDialogueNode : DialogueData
         outPoint = new ConnectionPoint(node, ConnectionPointType.Out, OnClickConnectionPoint);
     }
 
-    public void Draw() 
+    public void Draw()
     {
         type = (DialogueTypes.Type)EditorGUILayout.EnumPopup(type);
+        proceedToNextSpeaker = EditorGUILayout.Toggle("Proceed to next speaker?", proceedToNextSpeaker);
     }
 
     public IDialogueContext GetDialogueContext()
     {
         DialogueOfType dialogue = ScriptableObject.CreateInstance<DialogueOfType>();
-        dialogue.Init(type);
+        dialogue.Init(type, proceedToNextSpeaker);
         return dialogue;
     }
 
@@ -69,21 +71,4 @@ public class TypedDialogueNode : DialogueData
     {
         return 1;
     }
-
-    //public override bool HasInternalChildren()
-    //{
-    //    return false;
-    //}
-
-    //public override Node[] GetInternalChildren()
-    //{
-    //    // Scripted Dialogue Node has no internal children. This should not be called unless has internal children is true.
-    //    throw new Exception("Scripted Dialogue Node has no internal children. This method should not be called unless has internal children is true");
-    //}
-
-    //public override int GetInternalChildCount()
-    //{
-    //    return 0;
-    //}
-
 }

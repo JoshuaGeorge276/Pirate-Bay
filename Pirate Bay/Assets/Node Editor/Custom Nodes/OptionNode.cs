@@ -24,7 +24,7 @@ public class OptionNode : ConnectionNode
     {
         title = "Option " + number;
         parentNode = parent;
-        outPoint = new ConnectionPoint(parent, new Vector2(0, (number * 100.0f) - 10.0f), ConnectionPointType.Out, OnClickConnectionPoint);
+        outPoint = new ConnectionPoint(this, parent, new Vector2(0, (number * 100.0f) - 10.0f), ConnectionPointType.Out, OnClickConnectionPoint);
         onClickRemove = OnClickRemoveNode;
     }
 

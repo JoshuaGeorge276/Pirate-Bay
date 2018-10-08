@@ -26,4 +26,13 @@ public class ScriptedDialogue : IDialogueContext
         return new ScriptedDialogueDisplayer(sentences, speaker, conversation);
     }
 
+    public override bool OnlyPlayer()
+    {
+        return false;
+    }
+
+    public override bool ProceedToNextSpeaker()
+    {
+        return true;
+    }
 }
