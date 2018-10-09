@@ -20,10 +20,11 @@ public class AudioPlayer : SingletonBehaviour<AudioPlayer>
     {
         _audioJobSystem = GetComponent<AudioJobSystem>();
 
-        GameObject go = (new GameObject("MusicSource", typeof(AudioSource)));
+        GameObject go = new GameObject("MusicSource", typeof(AudioSource), typeof (AudioSource));
         go.transform.SetParent(transform);
-        AudioSource musicSource = go.GetComponent<AudioSource>();
-        _musicPlayer = new MusicPlayer(musicSource, _audioJobSystem);
+        AudioSource[] musicSources = go.GetComponents<AudioSource>();
+        if (musicSources.Length == 2)
+            _musicPlayer = new MusicPlayer(musicSources[0], musicSources[1], _audioJobSystem);
     }
 
     private const string GoblinMusic = "The Path of the Goblin King";
