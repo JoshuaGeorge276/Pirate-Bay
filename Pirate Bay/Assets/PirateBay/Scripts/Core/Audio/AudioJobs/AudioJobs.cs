@@ -26,7 +26,7 @@ namespace Core.Audio
 
         public virtual void OnStart()
         {
-            if (onStart != null) onStart();
+            onStart?.Invoke();
         }
 
         public abstract void Run(float a_deltaTime);
@@ -38,7 +38,7 @@ namespace Core.Audio
 
         public virtual void OnComplete()
         {
-            if (onComplete != null) onComplete();
+            onComplete?.Invoke();
         }
     }
 
@@ -46,7 +46,7 @@ namespace Core.Audio
 
     public class VolumeLerpJob : AudioJobBase
     {
-        private AudioSource _source;
+        private AudioChannel _channel;
 
         private float _lerpTime;
         private float _startVolume;
@@ -55,27 +55,27 @@ namespace Core.Audio
 
         private float testTime = 0f;
 
-        public VolumeLerpJob(AudioSource a_source, float a_toVolume, float a_time)
+        public VolumeLerpJob(AudioChannel a_channel, float a_toVolume, float a_time)
         {
-            _source = a_source;
+            _channel = a_channel;
             _targetVolume = a_toVolume;
             _timeToTarget = a_time;
         }
 
         public override void OnStart()
         {
-            _startVolume = _source.volume;
+            _startVolume = _channel.Volume;
 
             base.OnStart();
         }
 
         public override void Run(float a_deltaTime)
         {
-            float deltaVol = Mathf.Abs(_targetVolume - _source.volume);
+            float deltaVol = Mathf.Abs(_targetVolume - _channel.Volume);
             if (deltaVol > 0f)
             {
                 _lerpTime += a_deltaTime / _timeToTarget;
-                _source.volume = Mathf.Lerp(_startVolume, _targetVolume, _lerpTime);
+                _channel.Volume = Mathf.Lerp(_startVolume, _targetVolume, _lerpTime);
                 return;
             }
             _isDone = true;
