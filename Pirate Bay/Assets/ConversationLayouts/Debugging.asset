@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b6f83a41c91e7a47bd1b5d03d389de8, type: 3}
+  m_Name: Debugging
+  m_EditorClassIdentifier: 
+  title: Debugging
+  contexts:
+  - {fileID: 11400000, guid: b56f349e45e6f7f489c0876c68902a8c, type: 2}
+  - {fileID: 11400000, guid: d5490d750a30c9e40b2acd73e44a976d, type: 2}
+  childCounts: 0100000004000000

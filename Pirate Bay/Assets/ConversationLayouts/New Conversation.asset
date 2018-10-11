@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b6f83a41c91e7a47bd1b5d03d389de8, type: 3}
+  m_Name: New Conversation
+  m_EditorClassIdentifier: 
+  title: New Conversation
+  contexts:
+  - {fileID: 11400000, guid: 293e6b1bb608c7f408146dff4de8900c, type: 2}
+  - {fileID: 11400000, guid: fff0684e67cca7b49876020e8da1d704, type: 2}
+  - {fileID: 11400000, guid: 3a4c52e0748bee249be9e2a4d20fefe7, type: 2}
+  - {fileID: 11400000, guid: c5f87167fa50a6148bac8bef33d87597, type: 2}
+  - {fileID: 11400000, guid: 759dc1dbea26c2645a68568bff5ea2fc, type: 2}
+  - {fileID: 11400000, guid: 8da49153b3c961143b9032bcaae8f7e5, type: 2}
+  childCounts: 010000000400000000000000000000000000000000000000
