@@ -403,17 +403,17 @@ public class NodeBasedEditor : EditorWindow
                 DialogueNode<OptionsDialogueNode> castNode = (DialogueNode<OptionsDialogueNode>)tmp;
                 ConnectionNode[] children = castNode.Data.optionNodes.ToArray();
                 childCount = children.Length;
-                foreach (ConnectionNode node in children)
+                for(int i = 0; i < childCount; i++)
                 {
-                    ConnectionNode connectedNode = (ConnectionNode)GetConnectedNode(node);
+                    ConnectionNode connectedNode = (ConnectionNode)GetConnectedNode(children[i]);
                     if (connectedNode != null)
                     {
                         nodesToVist.Enqueue(connectedNode);
                     }
                     else
                     {
-                        Vector2 pos = node.rect.position;
-                        DialogueNode<TypedDialogueNode> endNode = CreateTypedDialogueNode(new Vector2(pos.x + 50, pos.y));
+                        Vector2 pos = castNode.rect.position;
+                        DialogueNode<TypedDialogueNode> endNode = CreateTypedDialogueNode(new Vector2(pos.x + 500, pos.y + (i * 125.0f)));
                         endNode.Data.type = DialogueTypes.Type.Goodbye;
                         nodesToVist.Enqueue(endNode);
                     }
@@ -506,21 +506,27 @@ public class NodeBasedEditor : EditorWindow
         for(int i = 0; i < deserializer.count; i++)
         {
             ConnectionNode node;
+            bool isChildNode = false;
             if(childrenNodes.Count > 0)
             {
-                node = childrenNodes.Dequeue();
-
+                selectedOutPoint = childrenNodes.Dequeue().GetOutPoint();
+                isChildNode = true;
             }
             else
             {
-                node = deserializer.GetNode(i, out childrenNodes);
-                nodes.Add(node);
+                selectedOutPoint = prevNode.GetOutPoint();
             }
-            
-            selectedOutPoint = prevNode.GetOutPoint();
+
+            node = deserializer.GetNode(i, childrenNodes);
+            nodes.Add(node);
+
             selectedInPoint = node.GetInPoint();
             CreateConnection();
-            prevNode = node;
+
+            if (!isChildNode)
+            {
+                prevNode = node;
+            }
         }
 
         Debug.Log("Loading Done");
@@ -564,13 +570,11 @@ public class NodeBasedEditor : EditorWindow
             count = data.count;
         }
 
-        public ConnectionNode GetNode(int index, out Queue<ConnectionNode> children)
+        public ConnectionNode GetNode(int index, Queue<ConnectionNode> children)
         {
             bool inScripted = scriptedNodes.Count > 0;
             bool inTyped = typedNodes.Count > 0;
             bool inOptions = optionNodes.Count > 0;
-
-            children = new Queue<ConnectionNode>();
 
             if (inScripted)
             {
