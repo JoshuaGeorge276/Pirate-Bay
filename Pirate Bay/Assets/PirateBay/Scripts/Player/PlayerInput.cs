@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Core;
+using PirateBay.World;
 
 [RequireComponent(typeof(ActorMovement))]
 public class PlayerInput : ManagedBehaviour
@@ -29,6 +30,24 @@ public class PlayerInput : ManagedBehaviour
             return;
 
         UpdateMovement();
+
+        if (!movement.IsMoving)
+        {
+            //Debug.DrawLine(movement.GridPosition, (Vector3) movement.GridPosition + (Vector3) movement.Forward);
+            if (inputPlayer.Controller.Device.GetButtonDown(InputButtonValue.Action1))
+            {
+                WorldGridPos forwardPos = (WorldGridPos)(movement.GridPosition + movement.Forward);
+                Interactable interactable;
+                Debug.Log("Checking For Interactable at " + (movement.GridPosition + movement.Forward));
+                if (World.Instance.TryGetInteractable(forwardPos, out interactable))
+                {
+                    if (interactable.CanInteract())
+                    {
+                        interactable.Interact();
+                    }
+                }
+            }
+        }
     }
 
     private void UpdateMovement()
