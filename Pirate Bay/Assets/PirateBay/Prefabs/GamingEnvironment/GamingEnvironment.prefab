@@ -53,5 +53,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _debugMode: 0
   environmentObjects:
-  - {fileID: 1177645498636382, guid: 69820a308a3db724fb509ea29459be72, type: 2}
   - {fileID: 1837640596834194, guid: 561562a436142aa46a1b30cc6d7bc745, type: 2}
+  - {fileID: 1177645498636382, guid: 69820a308a3db724fb509ea29459be72, type: 2}
