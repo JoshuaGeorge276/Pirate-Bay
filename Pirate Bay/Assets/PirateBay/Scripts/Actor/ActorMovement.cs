@@ -2,21 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using Core;
-using TMPro;
 using UnityEngine;
+using PirateBay.World;
 
+[RequireComponent(typeof(WorldObject))]
 public class ActorMovement : ManagedBehaviour
 {
     private Vector2 _input;
     public Vector2 Input { set { _input = value; } }
+
     private Vector2 Position { get { return transform.position; } set { transform.position = value; } }
     private Vector2 LocalPosition { get {return transform.localPosition;} set {transform.localPosition = value;} }
     private Transform _transform;
 
-    [SerializeField]
-    private float MoveSpeed;
+    private WorldObject _worldObject;
+
+    [SerializeField] private float _moveSpeed = 3.5f;
+
+    [SerializeField] private float _nextMoveInputThreshold = 0.01f;
 
     private bool _isMoving = false;
+    public bool IsMoving
+    {
+        get { return _isMoving; }
+    }
     private Vector2 _lastPos;
     private Vector2 _target;
     private Vector2 _facingDir;
@@ -24,6 +33,16 @@ public class ActorMovement : ManagedBehaviour
     public Vector2 CurrentMoveDir
     {
         get { return _target - _lastPos; }
+    }
+
+    public Vector2 GridPosition
+    {
+        get { return _lastPos; }
+    }
+
+    public Vector2 Forward
+    {
+        get { return _facingDir; }
     }
 
     protected override void Awake()
@@ -34,6 +53,8 @@ public class ActorMovement : ManagedBehaviour
         _lastPos = LocalPosition;
         _target = LocalPosition;
         _facingDir = Vector2.down;
+
+        _worldObject = GetComponent<WorldObject>();
     }
 
     // Use this for initialization
@@ -110,6 +131,7 @@ public class ActorMovement : ManagedBehaviour
         // TODO Collision Check
         _facingDir = a_moveDir;
         _target = _lastPos + a_moveDir;
+        _worldObject.GridPos = (WorldGridPos)_target;
         _isMoving = true;
     }
 
@@ -119,12 +141,12 @@ public class ActorMovement : ManagedBehaviour
         float absLength = Mathf.Abs(delta.magnitude);
         if (absLength > 0)
         {
-            Vector2 nextPos = Vector2.MoveTowards(LocalPosition, _target, MoveSpeed * a_deltaTime);
+            Vector2 nextPos = Vector2.MoveTowards(LocalPosition, _target, _moveSpeed * a_deltaTime);
 
             LocalPosition = nextPos;
 
 
-            if (absLength < 0.01f && ShouldMove(out nextPos))
+            if (absLength < _nextMoveInputThreshold && ShouldMove(out nextPos))
             {
                 _lastPos = _target;
                 StartMove(nextPos);
