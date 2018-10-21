@@ -58,6 +58,7 @@ public class PlayerInput : ManagedBehaviour
         Vector2 input;
         input.x = x;
         input.y = y;
+       
         movement.Input = input;
     }
 }

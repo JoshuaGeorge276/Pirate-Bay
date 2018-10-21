@@ -48,11 +48,15 @@ namespace PirateBay.World
             World.Instance.UnregisterWorldObject(this);
         }
 
+        [SerializeField]
+        private bool DrawGizmos = false;
+
         protected override void OnDrawGizmos()
         {
+            if (!DrawGizmos)
+                return;
             Gizmos.color = Color.blue;
-
-            Gizmos.DrawWireCube(transform.position, Vector3.one);
+            Gizmos.DrawWireCube(_gridPos.Vector3, Vector3.one);
         }
 
     }

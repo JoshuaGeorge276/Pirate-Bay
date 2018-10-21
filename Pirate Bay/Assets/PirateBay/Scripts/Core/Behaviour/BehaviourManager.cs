@@ -15,8 +15,10 @@ namespace Core
         private float _deltaTime;
         private float _fixedTime;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             _Behaviours = new List<ManagedBehaviour>(maxBehaviours);
             _regularBehaviours = new List<ManagedBehaviour>();
             _fixedBehaviours = new List<ManagedBehaviour>();

@@ -21,6 +21,16 @@ namespace PirateBay.World
             return pos;
         }
 
+        public Vector2 Vector2
+        {
+            get { return new Vector2(x, y); }
+        }
+
+        public Vector3 Vector3
+        {
+            get { return new Vector3(x, y); }
+        }
+
         public int x;
         public int y;
     }
@@ -29,14 +39,18 @@ namespace PirateBay.World
     {
         [SerializeField]
         private int WorldSizeX, WorldSizeY;
+
+        public Vector2 Bounds => new Vector2(WorldSizeX, WorldSizeY);
+
         private WorldGrid worldGrid;
 
         private Dictionary<int, WorldGridPos> _handleTracker;
 
         private WorldInteractableManager _interactableManager;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             worldGrid = new WorldGrid(WorldSizeX, WorldSizeY);
             _handleTracker = new Dictionary<int, WorldGridPos>();
 
@@ -197,6 +211,14 @@ namespace PirateBay.World
 
                 return true;
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Vector3 center = new Vector3((int)WorldSizeX * 0.5f - 0.5f, (int)WorldSizeY * 0.5f - 0.5f);
+            Vector3 size = new Vector3(WorldSizeX, WorldSizeY);
+            Gizmos.DrawWireCube(center, size);
         }
     }
 }

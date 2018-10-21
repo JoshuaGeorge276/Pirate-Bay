@@ -49,8 +49,10 @@ public class InputManager : SingletonBehaviour<InputManager>
 
     public void SetDebugMode(bool a_value) { isDebug = a_value; }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         currentUpdateAction = UpdatePlayers;
 
         _primaryInputPlayer = AddPlayer();
