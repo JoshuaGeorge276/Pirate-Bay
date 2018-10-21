@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Core;
+using Core.EventSystem;
+using PirateBay.Events.Camera;
 using UnityEngine;
 using PirateBay.World;
 
@@ -19,8 +21,6 @@ public class ActorMovement : ManagedBehaviour
 
     [SerializeField] private float _moveSpeed = 3.5f;
 
-    [SerializeField] private float _nextMoveInputThreshold = 0.01f;
-
     private bool _isMoving = false;
     public bool IsMoving
     {
@@ -30,9 +30,10 @@ public class ActorMovement : ManagedBehaviour
     private Vector2 _target;
     private Vector2 _facingDir;
 
+    private Vector2 _currentMoveDir;
     public Vector2 CurrentMoveDir
     {
-        get { return _target - _lastPos; }
+        get { return _currentMoveDir; }
     }
 
     public Vector2 GridPosition
@@ -61,32 +62,43 @@ public class ActorMovement : ManagedBehaviour
 	protected override void Start () 
 	{
 		base.Start();
+        EventSystem.Instance.Raise(new CamEvents.SetCamTargetEvent(transform));
 	}
 
     public override void ManagedUpdate(float a_fDeltaTime)
     {
+        Move(a_fDeltaTime);
+
         if (!_isMoving)
         {
+            Debug.Log("Not Moving");
             Vector2 moveDir;
             if (!ShouldMove(out moveDir))
+            {
+                _currentMoveDir = Vector2.zero;
                 return;
-
+            }
+                
+            Debug.Log("Recieved new movedir");
             StartMove(moveDir);
-            ResetInput();
+            //ResetInput();
         }
-
-        Move(a_fDeltaTime);
     }
 
     private bool ShouldMove(out Vector2 a_MoveDir)
     {
         Vector2 moveDir = GetMoveDir();
-
+        a_MoveDir = Vector2.zero;
         if (moveDir == Vector2.zero)
-        {
-            a_MoveDir = Vector2.zero;
             return false;
-        }
+
+        // Check in world bounds 
+        Vector2 newPos = LocalPosition + moveDir;
+
+        if (newPos.x < 0 || newPos.x > World.Instance.Bounds.x)
+            return false;
+        if (newPos.y < 0 || newPos.y > World.Instance.Bounds.y)
+            return false;
 
         a_MoveDir = moveDir;
         return true;
@@ -129,6 +141,7 @@ public class ActorMovement : ManagedBehaviour
     private void StartMove(Vector2 a_moveDir)
     {
         // TODO Collision Check
+        _currentMoveDir = a_moveDir;
         _facingDir = a_moveDir;
         _target = _lastPos + a_moveDir;
         _worldObject.GridPos = (WorldGridPos)_target;
@@ -137,25 +150,24 @@ public class ActorMovement : ManagedBehaviour
 
     private void Move(float a_deltaTime)
     {
-        Vector2 delta = _target - LocalPosition;
-        float absLength = Mathf.Abs(delta.magnitude);
-        if (absLength > 0)
+        if (SqrDistToTarget() > 0) // Not yet reached target
         {
             Vector2 nextPos = Vector2.MoveTowards(LocalPosition, _target, _moveSpeed * a_deltaTime);
-
             LocalPosition = nextPos;
 
-
-            if (absLength < _nextMoveInputThreshold && ShouldMove(out nextPos))
-            {
-                _lastPos = _target;
-                StartMove(nextPos);
-            }
-            return;
+            // Recheck if target is reached
+            if(SqrDistToTarget() > 0)
+                return;
         }
 
         _lastPos = _target;
         _isMoving = false;
+    }
+
+    private float SqrDistToTarget()
+    {
+        Vector2 delta = _target - LocalPosition;
+        return Mathf.Abs(delta.sqrMagnitude);
     }
 
     private void ResetInput()

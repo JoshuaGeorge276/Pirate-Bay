@@ -39,14 +39,18 @@ namespace PirateBay.World
     {
         [SerializeField]
         private int WorldSizeX, WorldSizeY;
+
+        public Vector2 Bounds => new Vector2(WorldSizeX, WorldSizeY);
+
         private WorldGrid worldGrid;
 
         private Dictionary<int, WorldGridPos> _handleTracker;
 
         private WorldInteractableManager _interactableManager;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             worldGrid = new WorldGrid(WorldSizeX, WorldSizeY);
             _handleTracker = new Dictionary<int, WorldGridPos>();
 

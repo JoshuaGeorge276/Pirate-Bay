@@ -5,24 +5,19 @@ namespace Core
     public class SingletonBehaviour<T> : MonoBehaviour
         where T : Component
     {
-        private static T _instance;
+        public static T Instance { get; private set; }
 
-        public static T Instance
+        protected virtual void Awake()
         {
-            get
+            if (Instance == null)
             {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<T>();
-                    if (_instance == null)
-                    {
-                        GameObject obj = new GameObject();
-                        obj.name = typeof(T).Name;
-                        _instance = obj.AddComponent<T>();
-                    }
-                }
-
-                return _instance;
+                Instance = this as T;
+            }
+            else
+            {
+                Debug.LogWarning("Destroyed " + gameObject.name +
+                                 "Due to duplicate singleton instance already existing!");
+                Destroy(gameObject);
             }
         }
     }
@@ -32,7 +27,7 @@ namespace Core
     {
         public static T Instance { get; private set; }
 
-        public virtual void Awake()
+        protected virtual void Awake()
         {
             if (Instance == null)
             {

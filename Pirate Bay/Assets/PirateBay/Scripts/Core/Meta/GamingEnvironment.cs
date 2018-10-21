@@ -8,7 +8,7 @@ public class GamingEnvironment : MonoBehaviour
     public bool _debugMode = false;
 
     [SerializeField]
-    private GameObject[] environmentObjects;
+    private List<GameObject> _environmentObjects;
 
     void Awake()
     {
@@ -16,22 +16,17 @@ public class GamingEnvironment : MonoBehaviour
 
         if(environment && environment != this)
         {
+            Debug.Log("Duplicate Gaming Environment Detected, destroying" + gameObject.name);
             Destroy(this);
             return;
         }
 
-        for(int i = 0; i < environmentObjects.Length; ++i)
+        for(int i = 0; i < _environmentObjects.Count; ++i)
         {
-            Instantiate(environmentObjects[i], transform);
+            Instantiate(_environmentObjects[i], transform);
         }
 
         if(InputManager.Instance)
             InputManager.Instance.SetDebugMode(_debugMode);
     }
-
-	// Use this for initialization
-	void Start () 
-	{
-	    
-	}
 }
