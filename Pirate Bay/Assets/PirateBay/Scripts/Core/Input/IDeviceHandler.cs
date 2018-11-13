@@ -12,4 +12,6 @@ public interface IDeviceHandler
     bool GetButtonDown(InputButtonValue a_value);
     bool GetButtonPressed(InputButtonValue a_value);
     bool GetButtonUp(InputButtonValue a_value);
+
+    float GetLastInputTime();
 }

@@ -4,6 +4,7 @@ public class OneAxisInput
 {
     private readonly string axisName;
     public float Value { get; private set; }
+    public float LastInputTime { get; private set; } = 0f;
 
     public OneAxisInput(string a_name)
     {
@@ -13,6 +14,8 @@ public class OneAxisInput
     public virtual void UpdateAxis()
     {
         Value = Input.GetAxis(axisName);
+        if (Mathf.Abs(Value) > 0)
+            LastInputTime = Time.realtimeSinceStartup;
     }
 
     public virtual void ResetAxis()

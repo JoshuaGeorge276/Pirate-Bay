@@ -49,6 +49,16 @@ public class InputManager : SingletonBehaviour<InputManager>
 
     public void SetDebugMode(bool a_value) { isDebug = a_value; }
 
+    private IDeviceHandler activeDevice;
+    public IDeviceHandler ActiveDevice
+    {
+        get { return activeDevice; }
+    }
+
+    public delegate void OnActiveDeviceChanged(int a_player);
+
+    public OnActiveDeviceChanged onActiveDeviceChanged;
+
     protected override void Awake()
     {
         base.Awake();
@@ -75,6 +85,8 @@ public class InputManager : SingletonBehaviour<InputManager>
         {
             StartEngagement(true);
         }
+
+        onActiveDeviceChanged += TestActiveDeviceChanged;
     }
 	
 	// Update is called once per frame
@@ -129,26 +141,40 @@ public class InputManager : SingletonBehaviour<InputManager>
         for (int i = 0; i < playerCount; ++i)
         {
             players[i].Update(_deltaTime);
+            Debug.Log("LastInputTime: " + players[i].Controller.Device.GetLastInputTime());
         }
 
-        bool action1 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action1);
-        bool action2 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action2);
-        bool action3 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action3);
-        bool action4 = GetPlayer(0).Controller.Device.GetButtonDown(InputButtonValue.Action4);
 
-        //Debug.Log("Horizontal: " + Input.GetAxis("KeyboardHorizontal"));
+        UpdateActiveDevice();
+    }
 
-        if(action1)
-            Debug.Log("Action 1 pressed!");
-        
-        if(action2)
-            Debug.Log("Action 2 pressed!");
-        
-        if(action3)
-            Debug.Log("Action 3 pressed!");
-        
-        if(action4)
-            Debug.Log("Action 4 pressed!");
+    private void UpdateActiveDevice()
+    {
+        for (int i = 0; i < playerCount; ++i)
+        {
+            IDeviceHandler device = players[i].Controller.Device;
+            float lastInputTime = device.GetLastInputTime();
+            if (activeDevice != null)
+            {
+                if (lastInputTime > activeDevice.GetLastInputTime())
+                {
+                    activeDevice = device;
+                    onActiveDeviceChanged?.Invoke(i);
+                }
+            }
+            else
+            {
+                activeDevice = device;
+                onActiveDeviceChanged?.Invoke(i);
+            }
+            
+        }
+    }
+
+    private void TestActiveDeviceChanged(int player)
+    {
+        int id = players[player].ID;
+        Debug.Log("Player " + id + "is now active device!");
     }
 
     private void LateUpdate()

@@ -14,14 +14,18 @@ public interface IInputDevice
 
     float GetAxis(InputAxisValue a_value);
     int GetButton(InputButtonValue a_value);
+
+    float LastInputTime();
 }
 
 public static class IInputDeviceHelper
 {
-    public static void UpdateButtons(this IInputDevice a_iDevice, int a_buttonCount,
+    public static bool UpdateButtons(this IInputDevice a_iDevice, int a_buttonCount,
                                         Dictionary<InputButtonValue, KeyCode> a_keyLookup,
                                         ref sbyte[] a_values)
     {
+        bool recievedInput = false;
+
         for (int i = 0; i < a_buttonCount; ++i)
         {
             sbyte currentValue = a_values[i];
@@ -37,7 +41,10 @@ public static class IInputDeviceHelper
                 case (sbyte) InputButtonState.None:
 
                     if (Input.GetKeyDown(key))
-                        a_values[i] = (sbyte) InputButtonState.Down;
+                    {
+                        a_values[i] = (sbyte)InputButtonState.Down;
+                        recievedInput = true;
+                    } 
 
                     continue;
                 case (sbyte) InputButtonState.Down:
@@ -45,28 +52,39 @@ public static class IInputDeviceHelper
                     if (Input.GetKey(key))
                     {
                         a_values[i] = (sbyte) InputButtonState.Pressed;
+                        recievedInput = true;
                     }
                     else if (Input.GetKeyUp(key))
                     {
                         a_values[i] = (sbyte) InputButtonState.Up;
+                        recievedInput = true;
                     }
 
                     continue;
                 case (sbyte) InputButtonState.Pressed:
 
                     if (Input.GetKeyUp(key))
-                        a_values[i] = (sbyte) InputButtonState.Up;
+                    {
+                        a_values[i] = (sbyte)InputButtonState.Up;
+                        recievedInput = true;
+                    }
+                        
 
                     continue;
                 case (sbyte) InputButtonState.Up:
-                     
+
                     if (Input.GetKeyDown(key))
-                        a_values[i] = (sbyte) InputButtonState.Down;
+                    {
+                        a_values[i] = (sbyte)InputButtonState.Down;
+                        recievedInput = true;
+                    } 
 
                     a_values[i] = (sbyte) InputButtonState.None;
                     continue;
             }
         }
+
+        return recievedInput;
     }
 }
 

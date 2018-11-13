@@ -6,6 +6,15 @@ public class TwoAxisInput
 {
     public OneAxisInput XAxis, YAxis;
 
+    public float LastInputTime
+    {
+        get
+        {
+            float time = (XAxis.LastInputTime > YAxis.LastInputTime) ? XAxis.LastInputTime : YAxis.LastInputTime;
+            return time;
+        }
+    }
+
     public TwoAxisInput(string a_XAxisName, string a_yAxisName)
     {
         XAxis = new OneAxisInput(a_XAxisName);
@@ -28,6 +37,15 @@ public class TwoAxisInput
 public class TwoAxisWithButtonInput
 {
     public OneAxisWithButtonInput XAxis, YAxis;
+
+    public float LastInputTime
+    {
+        get
+        {
+            float time = (XAxis.LastInputTime > YAxis.LastInputTime) ? XAxis.LastInputTime : YAxis.LastInputTime;
+            return time;
+        }
+    }
 
     public TwoAxisWithButtonInput(string a_xAxisName, string a_yAxisName)
     {

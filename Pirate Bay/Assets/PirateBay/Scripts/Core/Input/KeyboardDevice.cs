@@ -17,6 +17,13 @@ class KeyboardDevice : IInputDevice
 
     private int buttonCount = (int) InputButtonValue.COUNT;
 
+
+    private float lastInputTime = 0f;
+    public float LastInputTime()
+    {
+        return lastInputTime;
+    }
+
     public KeyboardDevice(KeyboardBindings _bindings)
     {
         buttonValues = new sbyte[buttonCount];
@@ -77,7 +84,9 @@ class KeyboardDevice : IInputDevice
     public void UpdateDevice()
     {
         UpdateAxis();   
-        this.UpdateButtons(buttonCount, keyLookup, ref buttonValues);
+        bool recievedButtonInput = this.UpdateButtons(buttonCount, keyLookup, ref buttonValues);
+        if (recievedButtonInput)
+            lastInputTime = Time.realtimeSinceStartup;
     }
 
     public void LateUpdateDevice()
@@ -87,10 +96,24 @@ class KeyboardDevice : IInputDevice
 
     private void UpdateAxis()
     {
+        float lastAxisInputTime = 0;
+
         keyboardAxis.UpdateAxis();
+        lastAxisInputTime = keyboardAxis.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
 
         mouseAxis.UpdateAxis();
+        lastAxisInputTime = mouseAxis.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
         mouseWheelAxis.UpdateAxis();
+        lastAxisInputTime = mouseWheelAxis.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
+    }
+
+    private void UpdateAxisInputTime(float lastAxisInput)
+    {
+        if (lastAxisInput > lastInputTime)
+            lastInputTime = lastAxisInput;
     }
 
     public float GetAxis(InputAxisValue a_value)

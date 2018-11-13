@@ -18,6 +18,13 @@ public class GamePadDevice : IInputDevice
 
     private int buttonCount = (int) InputButtonValue.COUNT;
 
+    private float lastInputTime = 0f;
+
+    public float LastInputTime()
+    {
+        return lastInputTime;
+    }
+
     public GamePadDevice(GamePadBindings a_bindings, int a_id)
     {
         PadID = a_id;
@@ -76,7 +83,10 @@ public class GamePadDevice : IInputDevice
     public void UpdateDevice()
     {
         UpdateAxis();
-        this.UpdateButtons(buttonCount, keyLookup, ref buttonValues);
+        bool recievedButtonInput = this.UpdateButtons(buttonCount, keyLookup, ref buttonValues);
+
+        if (recievedButtonInput)
+            lastInputTime = Time.realtimeSinceStartup;
     }
 
     public void LateUpdateDevice()
@@ -86,11 +96,34 @@ public class GamePadDevice : IInputDevice
 
     private void UpdateAxis()
     {
+        float lastAxisInputTime = 0;
+
         LeftStickAxis.UpdateAxis();
+        lastAxisInputTime = LeftStickAxis.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
+
         RightStickAxis.UpdateAxis();
+        lastAxisInputTime = RightStickAxis.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
+
         DPadAxis.UpdateAxis();
+        lastAxisInputTime = DPadAxis.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
+
+
         LeftTrigger.UpdateAxis();
+        lastAxisInputTime = LeftTrigger.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
+
         RightTrigger.UpdateAxis();
+        lastAxisInputTime = RightTrigger.LastInputTime;
+        UpdateAxisInputTime(lastAxisInputTime);
+    }
+
+    private void UpdateAxisInputTime(float lastAxisInput)
+    {
+        if (lastAxisInput > lastInputTime)
+            lastInputTime = lastAxisInput;
     }
 
     public float GetAxis(InputAxisValue a_value)

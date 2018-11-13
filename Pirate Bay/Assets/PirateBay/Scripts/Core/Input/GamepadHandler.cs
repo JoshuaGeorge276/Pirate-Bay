@@ -55,4 +55,9 @@ public class GamepadHandler : IDeviceHandler
     {
         return device.GetButton(a_value) == (int) InputButtonState.Up;
     }
+
+    public float GetLastInputTime()
+    {
+        return device.LastInputTime();
+    }
 }
